@@ -1,7 +1,7 @@
-
 import React, { useState, useCallback } from 'react';
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import type { Database } from '@/integrations/supabase/types';
 
 export type MembershipTier = {
   id: string;
@@ -53,30 +53,45 @@ export const useMembership = () => {
     setIsUpdating(true);
     
     try {
-      // Using upsert with onConflict to ensure we have only one row per tier
+      // First, get existing counts to determine if we need to insert or update
+      const { data: existingCounts, error: fetchError } = await supabase
+        .from('current_membership_counts')
+        .select('membership_tier_id')
+        .in('membership_tier_id', updates.map(u => u.membership_tier_id));
+
+      if (fetchError) throw fetchError;
+
+      const existingTierIds = new Set(existingCounts?.map(c => c.membership_tier_id));
+      
+      // Separate updates into inserts and updates
+      const insertsAndUpdates = updates.map(update => ({
+        ...update,
+        created_at: new Date().toISOString(),
+        // If the tier_id exists, we want to update, otherwise insert
+        id: existingTierIds.has(update.membership_tier_id) ? undefined : crypto.randomUUID()
+      }));
+
+      // Perform the upsert with the correct configuration
       const { error } = await supabase
         .from('current_membership_counts')
-        .upsert(
-          updates.map(update => ({
-            membership_tier_id: update.membership_tier_id,
-            active_members: update.active_members
-          })),
-          { 
-            onConflict: 'membership_tier_id', 
-            ignoreDuplicates: false 
-          }
-        );
+        .upsert(insertsAndUpdates, {
+          onConflict: 'membership_tier_id',
+          ignoreDuplicates: false
+        });
         
-      if (error) throw error;
+      if (error) {
+        console.error('Error in upsert operation:', error);
+        throw error;
+      }
+      
+      // Fetch the latest data to ensure UI is in sync
+      await fetchMembershipData();
       
       toast.success("Membership counts updated successfully");
-      
-      // Wait for fetch to complete before returning
-      await fetchMembershipData();
       return true;
     } catch (error) {
-      toast.error("Failed to update membership counts");
       console.error('Error updating membership counts:', error);
+      toast.error("Failed to update membership counts");
       return false;
     } finally {
       setIsUpdating(false);

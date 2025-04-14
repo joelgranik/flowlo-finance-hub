@@ -1,4 +1,3 @@
-
 import React from 'react';
 import {
   Table,
@@ -37,7 +36,7 @@ const MembershipTiersTable = () => {
   }, [membershipTiers, membershipCounts]);
 
   const handleCountChange = (tierId: string, value: string) => {
-    const numValue = parseInt(value) || 0;
+    const numValue = parseInt(value, 10) || 0;
     setCounts(prev => ({
       ...prev,
       [tierId]: numValue
@@ -48,15 +47,25 @@ const MembershipTiersTable = () => {
   const handleSubmit = async () => {
     const updates = Object.entries(counts).map(([tierId, count]) => ({
       membership_tier_id: tierId,
-      active_members: count
+      active_members: count as number // We know this is a number from handleCountChange
     }));
+    
+    // Disable the button during update
+    setHasChanges(false);
     
     // Wait for the update to complete
     const success = await updateMembershipCount(updates);
     
-    if (success) {
-      // If successful, the fetchMembershipData in the hook will have already updated the state
-      setHasChanges(false);
+    if (!success) {
+      // If update failed, revert hasChanges to allow retrying
+      setHasChanges(true);
+      // Reset counts to last known good state
+      const initialCounts: Record<string, number> = {};
+      membershipTiers.forEach((tier) => {
+        const count = membershipCounts.find(c => c.membership_tier_id === tier.id);
+        initialCounts[tier.id] = count?.active_members || 0;
+      });
+      setCounts(initialCounts);
     }
   };
 
@@ -82,6 +91,7 @@ const MembershipTiersTable = () => {
                   onChange={(e) => handleCountChange(tier.id, e.target.value)}
                   min={0}
                   className="w-32"
+                  disabled={isUpdating}
                 />
               </TableCell>
             </TableRow>
@@ -93,7 +103,7 @@ const MembershipTiersTable = () => {
           onClick={handleSubmit}
           disabled={isUpdating || !hasChanges}
         >
-          {isUpdating ? "Updating..." : "Update Counts"}
+          {isUpdating ? "Updating..." : hasChanges ? "Update Counts" : "Updated"}
         </Button>
       </div>
     </div>
