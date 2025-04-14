@@ -2,6 +2,7 @@ import React, { useState, useCallback } from 'react';
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import type { Database } from '@/integrations/supabase/types';
+import { useAuth } from "@/contexts/AuthContext";
 
 export type MembershipTier = {
   id: string;
@@ -18,12 +19,18 @@ export type MembershipCount = {
 };
 
 export const useMembership = () => {
+  const { session } = useAuth();
   const [membershipTiers, setMembershipTiers] = useState<MembershipTier[]>([]);
   const [membershipCounts, setMembershipCounts] = useState<MembershipCount[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isUpdating, setIsUpdating] = useState(false);
 
   const fetchMembershipData = useCallback(async () => {
+    if (!session) {
+      console.error("No auth session found");
+      return;
+    }
+
     setIsLoading(true);
     try {
       const [tiersResult, countsResult] = await Promise.all([
@@ -36,8 +43,14 @@ export const useMembership = () => {
           .select('*')
       ]);
 
-      if (tiersResult.error) throw tiersResult.error;
-      if (countsResult.error) throw countsResult.error;
+      if (tiersResult.error) {
+        console.error("Error fetching tiers:", tiersResult.error);
+        throw tiersResult.error;
+      }
+      if (countsResult.error) {
+        console.error("Error fetching counts:", countsResult.error);
+        throw countsResult.error;
+      }
 
       setMembershipTiers(tiersResult.data);
       setMembershipCounts(countsResult.data);
@@ -47,43 +60,51 @@ export const useMembership = () => {
     } finally {
       setIsLoading(false);
     }
-  }, []);
+  }, [session]);
 
   const updateMembershipCount = async (updates: { membership_tier_id: string; active_members: number }[]) => {
+    if (!session) {
+      console.error("No auth session found");
+      toast.error("Please log in to update membership counts");
+      return false;
+    }
+
     setIsUpdating(true);
     
     try {
-      // First, get existing counts to determine if we need to insert or update
-      const { data: existingCounts, error: fetchError } = await supabase
+      // Get all tier IDs being updated
+      const tierIds = updates.map(u => u.membership_tier_id);
+      console.log("Updating counts for tiers:", tierIds);
+
+      // First delete existing records for these tiers
+      const { error: deleteError } = await supabase
         .from('current_membership_counts')
-        .select('membership_tier_id')
-        .in('membership_tier_id', updates.map(u => u.membership_tier_id));
+        .delete()
+        .in('membership_tier_id', tierIds);
 
-      if (fetchError) throw fetchError;
+      if (deleteError) {
+        console.error("Error deleting existing counts:", deleteError);
+        throw deleteError;
+      }
 
-      const existingTierIds = new Set(existingCounts?.map(c => c.membership_tier_id));
-      
-      // Separate updates into inserts and updates
-      const insertsAndUpdates = updates.map(update => ({
-        ...update,
+      // Then insert new records
+      const newRecords = updates.map(update => ({
+        id: crypto.randomUUID(),
+        membership_tier_id: update.membership_tier_id,
+        active_members: update.active_members,
         created_at: new Date().toISOString(),
-        // If the tier_id exists, we want to update, otherwise insert
-        id: existingTierIds.has(update.membership_tier_id) ? undefined : crypto.randomUUID()
+        created_by: session.user.id
       }));
 
-      // Perform the upsert with the correct configuration
-      const { error } = await supabase
+      const { error: insertError } = await supabase
         .from('current_membership_counts')
-        .upsert(insertsAndUpdates, {
-          onConflict: 'membership_tier_id',
-          ignoreDuplicates: false
-        });
-        
-      if (error) {
-        console.error('Error in upsert operation:', error);
-        throw error;
+        .insert(newRecords);
+
+      if (insertError) {
+        console.error("Error inserting new counts:", insertError);
+        throw insertError;
       }
-      
+
       // Fetch the latest data to ensure UI is in sync
       await fetchMembershipData();
       
