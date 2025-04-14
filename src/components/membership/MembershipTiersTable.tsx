@@ -22,6 +22,7 @@ const MembershipTiersTable = () => {
   } = useMembership();
 
   const [counts, setCounts] = React.useState<Record<string, number>>({});
+  const [hasChanges, setHasChanges] = React.useState(false);
 
   React.useEffect(() => {
     // Initialize counts from current membership counts
@@ -31,6 +32,7 @@ const MembershipTiersTable = () => {
       initialCounts[tier.id] = count?.active_members || 0;
     });
     setCounts(initialCounts);
+    setHasChanges(false); // Reset change detection on new data
   }, [membershipTiers, membershipCounts]);
 
   const handleCountChange = (tierId: string, value: string) => {
@@ -39,6 +41,7 @@ const MembershipTiersTable = () => {
       ...prev,
       [tierId]: numValue
     }));
+    setHasChanges(true);
   };
 
   const handleSubmit = async () => {
@@ -46,7 +49,9 @@ const MembershipTiersTable = () => {
       membership_tier_id: tierId,
       active_members: count
     }));
+    
     await updateMembershipCount(updates);
+    setHasChanges(false);
   };
 
   return (
@@ -80,9 +85,9 @@ const MembershipTiersTable = () => {
       <div className="flex justify-end">
         <Button 
           onClick={handleSubmit}
-          disabled={isUpdating}
+          disabled={isUpdating || !hasChanges}
         >
-          Update Counts
+          {isUpdating ? "Updating..." : "Update Counts"}
         </Button>
       </div>
     </div>

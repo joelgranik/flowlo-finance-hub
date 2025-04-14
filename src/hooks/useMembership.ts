@@ -1,3 +1,4 @@
+
 import React, { useState, useCallback } from 'react';
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
@@ -50,20 +51,49 @@ export const useMembership = () => {
 
   const updateMembershipCount = async (updates: { membership_tier_id: string; active_members: number }[]) => {
     setIsUpdating(true);
+    let success = true;
+    
     try {
       for (const update of updates) {
-        const { error } = await supabase
-          .from('current_membership_counts')
-          .upsert({
-            membership_tier_id: update.membership_tier_id,
-            active_members: update.active_members
-          });
+        // Check if a record already exists for this tier
+        const existingCount = membershipCounts.find(
+          count => count.membership_tier_id === update.membership_tier_id
+        );
 
-        if (error) throw error;
+        let error;
+        
+        if (existingCount) {
+          // Update existing record
+          const { error: updateError } = await supabase
+            .from('current_membership_counts')
+            .update({ active_members: update.active_members })
+            .eq('id', existingCount.id);
+          
+          error = updateError;
+        } else {
+          // Insert new record
+          const { error: insertError } = await supabase
+            .from('current_membership_counts')
+            .insert([{
+              membership_tier_id: update.membership_tier_id,
+              active_members: update.active_members
+            }]);
+          
+          error = insertError;
+        }
+
+        if (error) {
+          console.error('Error updating membership count:', error);
+          success = false;
+          throw error;
+        }
       }
       
-      toast.success("Membership counts updated successfully");
-      await fetchMembershipData(); // Refresh the data
+      if (success) {
+        toast.success("Membership counts updated successfully");
+        // Refresh the data to confirm changes
+        await fetchMembershipData();
+      }
     } catch (error) {
       toast.error("Failed to update membership counts");
       console.error('Error updating membership counts:', error);
