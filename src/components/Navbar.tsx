@@ -5,11 +5,11 @@ import { useAuth } from "@/contexts/AuthContext";
 import { LogOut } from "lucide-react";
 
 const Navbar = () => {
-  const { logout } = useAuth();
+  const { logout, user, userRole } = useAuth();
   const navigate = useNavigate();
 
-  const handleLogout = () => {
-    logout();
+  const handleLogout = async () => {
+    await logout();
     navigate("/login");
   };
 
@@ -37,6 +37,11 @@ const Navbar = () => {
           </nav>
         </div>
         <div className="flex items-center gap-4">
+          {user && userRole && (
+            <span className="hidden md:inline text-sm font-medium text-gray-600">
+              Welcome, {userRole}!
+            </span>
+          )}
           <Button 
             variant="ghost" 
             onClick={handleLogout}

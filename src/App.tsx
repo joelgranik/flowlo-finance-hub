@@ -8,6 +8,7 @@ import { AuthProvider } from "./contexts/AuthContext";
 
 // Pages
 import LoginPage from "./pages/LoginPage";
+import SignupPage from "./pages/SignupPage";
 import DataEntryPage from "./pages/DataEntryPage";
 import DashboardPage from "./pages/DashboardPage";
 import NotFound from "./pages/NotFound";
@@ -19,17 +20,18 @@ const queryClient = new QueryClient();
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
-      <AuthProvider>
-        <Toaster />
-        <Sonner />
-        <BrowserRouter>
+      <BrowserRouter>
+        <AuthProvider>
+          <Toaster />
+          <Sonner />
           <Routes>
             <Route path="/login" element={<LoginPage />} />
+            <Route path="/signup" element={<SignupPage />} />
             <Route element={<Layout />}>
               <Route 
                 path="/data-entry" 
                 element={
-                  <ProtectedRoute>
+                  <ProtectedRoute requiredRole="Staff">
                     <DataEntryPage />
                   </ProtectedRoute>
                 } 
@@ -37,7 +39,7 @@ const App = () => (
               <Route 
                 path="/dashboard" 
                 element={
-                  <ProtectedRoute>
+                  <ProtectedRoute requiredRole="Partner">
                     <DashboardPage />
                   </ProtectedRoute>
                 } 
@@ -46,8 +48,8 @@ const App = () => (
             </Route>
             <Route path="*" element={<NotFound />} />
           </Routes>
-        </BrowserRouter>
-      </AuthProvider>
+        </AuthProvider>
+      </BrowserRouter>
     </TooltipProvider>
   </QueryClientProvider>
 );

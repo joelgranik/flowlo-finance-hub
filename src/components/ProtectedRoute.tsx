@@ -1,14 +1,16 @@
 
-import { Navigate } from "react-router-dom";
+import { Navigate, useLocation } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { ReactNode } from "react";
 
 interface ProtectedRouteProps {
   children: ReactNode;
+  requiredRole?: string;
 }
 
-const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
-  const { isAuthenticated, isLoading } = useAuth();
+const ProtectedRoute = ({ children, requiredRole }: ProtectedRouteProps) => {
+  const { isAuthenticated, isLoading, userRole } = useAuth();
+  const location = useLocation();
 
   if (isLoading) {
     return (
@@ -19,7 +21,21 @@ const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
   }
 
   if (!isAuthenticated) {
-    return <Navigate to="/login" />;
+    // Redirect to login, but remember where they were trying to go
+    return <Navigate to="/login" state={{ from: location }} replace />;
+  }
+
+  // If a specific role is required, check for it
+  if (requiredRole && userRole !== requiredRole) {
+    // Redirect based on their actual role
+    if (userRole === 'Staff') {
+      return <Navigate to="/data-entry" replace />;
+    } else if (userRole === 'Partner') {
+      return <Navigate to="/dashboard" replace />;
+    } else {
+      // Fallback if role is somehow not set
+      return <Navigate to="/login" replace />;
+    }
   }
 
   return <>{children}</>;

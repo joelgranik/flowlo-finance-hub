@@ -1,5 +1,5 @@
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
@@ -9,47 +9,40 @@ import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 
-const LoginPage = () => {
+const SignupPage = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
   
-  const { login, isLoading, isAuthenticated, userRole } = useAuth();
+  const { signup, isLoading } = useAuth();
   const navigate = useNavigate();
 
-  // Redirect if already authenticated
-  useEffect(() => {
-    if (isAuthenticated) {
-      redirectBasedOnRole();
-    }
-  }, [isAuthenticated, userRole]);
-
-  const redirectBasedOnRole = () => {
-    if (userRole === 'Staff') {
-      navigate('/data-entry');
-    } else if (userRole === 'Partner') {
-      navigate('/dashboard');
-    } else {
-      // Default redirection if role not determined yet
-      navigate('/dashboard');
-    }
-  };
-
-  const handleLogin = async (e: React.FormEvent) => {
+  const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
     
+    if (password !== confirmPassword) {
+      setError("Passwords don't match");
+      return;
+    }
+    
+    if (password.length < 6) {
+      setError("Password must be at least 6 characters");
+      return;
+    }
+
     try {
-      const { error: loginError } = await login(email, password);
+      const { error: signupError } = await signup(email, password);
       
-      if (loginError) {
-        setError(loginError.message);
+      if (signupError) {
+        setError(signupError.message);
       } else {
-        toast.success("Successfully logged in");
-        redirectBasedOnRole();
+        toast.success("Sign up successful! Please check your email to confirm your account.");
+        navigate("/login");
       }
     } catch (err: any) {
-      setError(err.message || "Failed to login");
+      setError(err.message || "Failed to sign up");
     }
   };
 
@@ -64,12 +57,12 @@ const LoginPage = () => {
         
         <Card className="border-none shadow-lg">
           <CardHeader>
-            <CardTitle>Sign In</CardTitle>
+            <CardTitle>Create Account</CardTitle>
             <CardDescription>
-              Enter your credentials to access your account
+              Enter your details to create a new account
             </CardDescription>
           </CardHeader>
-          <form onSubmit={handleLogin}>
+          <form onSubmit={handleSignup}>
             <CardContent className="space-y-4">
               {error && (
                 <Alert variant="destructive" className="border-red-300 bg-red-50 text-red-800">
@@ -99,6 +92,17 @@ const LoginPage = () => {
                   required
                 />
               </div>
+              <div className="space-y-2">
+                <Label htmlFor="confirmPassword">Confirm Password</Label>
+                <Input
+                  id="confirmPassword"
+                  type="password"
+                  placeholder="••••••••"
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  required
+                />
+              </div>
             </CardContent>
             <CardFooter className="flex flex-col space-y-4">
               <Button 
@@ -106,12 +110,12 @@ const LoginPage = () => {
                 className="w-full bg-brand-600 hover:bg-brand-700" 
                 disabled={isLoading}
               >
-                {isLoading ? "Signing in..." : "Sign In"}
+                {isLoading ? "Creating Account..." : "Sign Up"}
               </Button>
               <p className="text-center text-sm">
-                Don't have an account?{" "}
-                <Link to="/signup" className="text-brand-600 hover:underline">
-                  Sign Up
+                Already have an account?{" "}
+                <Link to="/login" className="text-brand-600 hover:underline">
+                  Sign In
                 </Link>
               </p>
             </CardFooter>
@@ -122,4 +126,4 @@ const LoginPage = () => {
   );
 };
 
-export default LoginPage;
+export default SignupPage;
