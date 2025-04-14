@@ -71,6 +71,11 @@ const MembershipTiersTable = () => {
 
   return (
     <div className="space-y-4">
+      <div className="bg-blue-100 dark:bg-blue-900 p-4 rounded-lg mb-4">
+        <p className="text-sm text-blue-800 dark:text-blue-200">
+          🔄 Updated Membership Form (v2) - Changes will persist correctly
+        </p>
+      </div>
       <Table>
         <TableHeader>
           <TableRow>
