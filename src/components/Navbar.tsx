@@ -36,13 +36,15 @@ const Navbar = () => {
               <FileText className="h-4 w-4" />
               <span>Data Entry</span>
             </Link>
-            <Link
-              to="/admin"
-              className="flex items-center gap-1.5 text-sm font-medium text-gray-600 transition-colors hover:text-brand-600"
-            >
-              <Settings className="h-4 w-4" />
-              <span>Admin</span>
-            </Link>
+            {userRole === "Staff" && (
+              <Link
+                to="/admin"
+                className="flex items-center gap-1.5 text-sm font-medium text-gray-600 transition-colors hover:text-brand-600"
+              >
+                <Settings className="h-4 w-4" />
+                <span>Admin</span>
+              </Link>
+            )}
           </nav>
         </div>
         <div className="flex items-center gap-4">
