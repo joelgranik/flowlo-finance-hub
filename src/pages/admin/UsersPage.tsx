@@ -27,7 +27,7 @@ const UsersPage = () => {
     updateUserRole,
   } = useUsers();
 
-  const handleRoleChange = async (userId: string, role: string) => {
+  const handleRoleChange = async (userId: string, role: "Staff" | "Partner") => {
     await updateUserRole(userId, role);
   };
 
@@ -78,7 +78,7 @@ const UsersPage = () => {
                       <TableCell>
                         <Select
                           value={user.role}
-                          onValueChange={(value) => handleRoleChange(user.id, value)}
+                          onValueChange={(value: "Staff" | "Partner") => handleRoleChange(user.id, value)}
                           disabled={isUpdating}
                         >
                           <SelectTrigger className="w-[180px]">
