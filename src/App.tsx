@@ -1,3 +1,4 @@
+
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -20,6 +21,12 @@ import InflowsPage from "./pages/data-entry/InflowsPage";
 import OutflowsPage from "./pages/data-entry/OutflowsPage";
 import MembershipPage from "./pages/data-entry/MembershipPage";
 import MembershipTiersPage from "./pages/admin/MembershipTiersPage";
+
+// Admin Pages
+import AdminPage from "./pages/AdminPage";
+import CategoriesPage from "./pages/admin/CategoriesPage";
+import TagsPage from "./pages/admin/TagsPage";
+import UsersPage from "./pages/admin/UsersPage";
 
 const queryClient = new QueryClient();
 
@@ -57,14 +64,22 @@ const App = () => (
                 }
               />
               <Route path="/" element={<Navigate to="/dashboard" replace />} />
+              
+              {/* Admin Routes */}
               <Route
-                path="/admin/membership-tiers"
+                path="/admin"
                 element={
                   <ProtectedRoute requiredRole="Staff">
-                    <MembershipTiersPage />
+                    <AdminPage />
                   </ProtectedRoute>
                 }
-              />
+              >
+                <Route path="categories" element={<CategoriesPage />} />
+                <Route path="tags" element={<TagsPage />} />
+                <Route path="users" element={<UsersPage />} />
+                <Route path="membership-tiers" element={<MembershipTiersPage />} />
+                <Route index element={<Navigate to="categories" replace />} />
+              </Route>
             </Route>
             <Route path="*" element={<NotFound />} />
           </Routes>

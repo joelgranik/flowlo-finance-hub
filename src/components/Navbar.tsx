@@ -2,7 +2,7 @@
 import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
-import { LogOut } from "lucide-react";
+import { LogOut, FileText, BarChart3, Settings } from "lucide-react";
 
 const Navbar = () => {
   const { logout, user, userRole } = useAuth();
@@ -24,15 +24,24 @@ const Navbar = () => {
           <nav className="hidden md:flex gap-6">
             <Link
               to="/dashboard"
-              className="text-sm font-medium text-gray-600 transition-colors hover:text-brand-600"
+              className="flex items-center gap-1.5 text-sm font-medium text-gray-600 transition-colors hover:text-brand-600"
             >
-              Dashboard
+              <BarChart3 className="h-4 w-4" />
+              <span>Dashboard</span>
             </Link>
             <Link
               to="/data-entry"
-              className="text-sm font-medium text-gray-600 transition-colors hover:text-brand-600"
+              className="flex items-center gap-1.5 text-sm font-medium text-gray-600 transition-colors hover:text-brand-600"
             >
-              Data Entry
+              <FileText className="h-4 w-4" />
+              <span>Data Entry</span>
+            </Link>
+            <Link
+              to="/admin"
+              className="flex items-center gap-1.5 text-sm font-medium text-gray-600 transition-colors hover:text-brand-600"
+            >
+              <Settings className="h-4 w-4" />
+              <span>Admin</span>
             </Link>
           </nav>
         </div>
