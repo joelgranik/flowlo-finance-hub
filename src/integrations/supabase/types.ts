@@ -18,6 +18,7 @@ export type Database = {
           ending_balance: number
           id: string
           notes: string | null
+          tags: string | null
         }
         Insert: {
           account_name?: string
@@ -27,6 +28,7 @@ export type Database = {
           ending_balance: number
           id?: string
           notes?: string | null
+          tags?: string | null
         }
         Update: {
           account_name?: string
@@ -36,6 +38,7 @@ export type Database = {
           ending_balance?: number
           id?: string
           notes?: string | null
+          tags?: string | null
         }
         Relationships: []
       }
@@ -182,6 +185,7 @@ export type Database = {
           id: string
           item_name: string
           notes: string | null
+          tags: string | null
           type: string | null
         }
         Insert: {
@@ -192,6 +196,7 @@ export type Database = {
           id?: string
           item_name: string
           notes?: string | null
+          tags?: string | null
           type?: string | null
         }
         Update: {
@@ -202,6 +207,7 @@ export type Database = {
           id?: string
           item_name?: string
           notes?: string | null
+          tags?: string | null
           type?: string | null
         }
         Relationships: []

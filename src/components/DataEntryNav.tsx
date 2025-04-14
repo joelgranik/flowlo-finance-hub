@@ -42,6 +42,17 @@ const DataEntryNav = () => {
             Outflows
           </Link>
         </NavigationMenuItem>
+        <NavigationMenuItem>
+          <Link
+            to="/data-entry/membership"
+            className={cn(
+              "text-sm font-medium transition-colors hover:text-primary",
+              location.pathname === "/data-entry/membership" ? "text-primary" : "text-muted-foreground"
+            )}
+          >
+            Membership
+          </Link>
+        </NavigationMenuItem>
       </NavigationMenuList>
     </NavigationMenu>
   );

@@ -19,6 +19,7 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import BankBalancePage from "./pages/data-entry/BankBalancePage";
 import InflowsPage from "./pages/data-entry/InflowsPage";
 import OutflowsPage from "./pages/data-entry/OutflowsPage";
+import MembershipPage from "./pages/data-entry/MembershipPage";
 
 const queryClient = new QueryClient();
 
@@ -44,6 +45,7 @@ const App = () => (
                 <Route path="bank-balance" element={<BankBalancePage />} />
                 <Route path="inflows" element={<InflowsPage />} />
                 <Route path="outflows" element={<OutflowsPage />} />
+                <Route path="membership" element={<MembershipPage />} />
                 <Route index element={<Navigate to="bank-balance" replace />} />
               </Route>
               <Route 
