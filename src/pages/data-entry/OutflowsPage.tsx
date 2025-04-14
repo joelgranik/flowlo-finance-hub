@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
@@ -5,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Badge } from "@/components/ui/badge";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
@@ -12,14 +14,15 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { Edit2, Trash2 } from "lucide-react";
 import CategorySelect from "@/components/CategorySelect";
+import TagSelect from "@/components/TagSelect";
 
 const outflowSchema = z.object({
   description: z.string().min(1, "Description is required"),
   amount: z.coerce.number().positive("Amount must be a positive number"),
   date: z.string().min(1, "Date is required"),
   notes: z.string().optional(),
-  tags: z.string().optional(),
-  category_id: z.string().min(1, "Category is required")
+  category_id: z.string().min(1, "Category is required"),
+  tagIds: z.array(z.string()).optional()
 });
 
 const OutflowsPage = () => {
@@ -33,8 +36,8 @@ const OutflowsPage = () => {
       amount: 0,
       date: "",
       notes: "",
-      tags: "",
-      category_id: ""
+      category_id: "",
+      tagIds: []
     }
   });
 
@@ -45,7 +48,13 @@ const OutflowsPage = () => {
   const fetchUpcomingOutflows = async () => {
     const { data, error } = await supabase
       .from('scheduled_items')
-      .select('*, category:category_id(category_name)')
+      .select(`
+        *,
+        category:category_id(category_name),
+        scheduled_item_tags(
+          tags:tag_id(id, tag_name, color)
+        )
+      `)
       .eq('type', 'Outflow')
       .order('expected_date', { ascending: true });
 
@@ -64,18 +73,52 @@ const OutflowsPage = () => {
         expected_date: values.date,
         type: 'Outflow',
         notes: values.notes || null,
-        tags: values.tags || null,
         category_id: values.category_id
       };
 
-      const { data, error } = editingOutflow 
-        ? await supabase
-            .from('scheduled_items')
-            .update(payload)
-            .eq('id', editingOutflow.id)
-        : await supabase.from('scheduled_items').insert(payload);
+      let result;
+      if (editingOutflow) {
+        const { data, error } = await supabase
+          .from('scheduled_items')
+          .update(payload)
+          .eq('id', editingOutflow.id)
+          .select()
+          .single();
 
-      if (error) throw error;
+        if (error) throw error;
+        result = data;
+      } else {
+        const { data, error } = await supabase
+          .from('scheduled_items')
+          .insert(payload)
+          .select()
+          .single();
+
+        if (error) throw error;
+        result = data;
+      }
+
+      // Handle tag associations
+      if (editingOutflow) {
+        // Delete existing tags
+        await supabase
+          .from('scheduled_item_tags')
+          .delete()
+          .eq('scheduled_item_id', editingOutflow.id);
+      }
+
+      if (values.tagIds?.length > 0) {
+        const tagInserts = values.tagIds.map(tagId => ({
+          scheduled_item_id: result.id,
+          tag_id: tagId
+        }));
+
+        const { error: tagError } = await supabase
+          .from('scheduled_item_tags')
+          .insert(tagInserts);
+
+        if (tagError) throw tagError;
+      }
 
       toast.success(editingOutflow 
         ? "Outflow updated successfully!" 
@@ -96,8 +139,8 @@ const OutflowsPage = () => {
       amount: outflow.expected_amount,
       date: outflow.expected_date,
       notes: outflow.notes || "",
-      tags: outflow.tags || "",
-      category_id: outflow.category_id
+      category_id: outflow.category_id,
+      tagIds: outflow.scheduled_item_tags?.map(tag => tag.tags.id) || []
     });
   };
 
@@ -208,21 +251,23 @@ const OutflowsPage = () => {
                     </FormItem>
                   )}
                 />
+                
                 <FormField
                   control={form.control}
-                  name="tags"
+                  name="tagIds"
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>Tags</FormLabel>
                       <FormControl>
-                        <Input 
-                          placeholder="Optional tags (e.g., Rent, Operating Expenses)" 
-                          {...field} 
+                        <TagSelect
+                          selectedTags={field.value || []}
+                          onTagsChange={field.onChange}
                         />
                       </FormControl>
                     </FormItem>
                   )}
                 />
+
                 <Button type="submit" className="w-full">
                   {editingOutflow ? 'Update Outflow' : 'Record Outflow'}
                 </Button>
@@ -258,7 +303,15 @@ const OutflowsPage = () => {
                       <TableCell>${outflow.expected_amount.toFixed(2)}</TableCell>
                       <TableCell>{outflow.category?.category_name || '-'}</TableCell>
                       <TableCell>{outflow.notes || '-'}</TableCell>
-                      <TableCell>{outflow.tags || '-'}</TableCell>
+                      <TableCell>
+                        <div className="flex gap-1 flex-wrap">
+                          {outflow.scheduled_item_tags?.map(({ tags }) => (
+                            <Badge key={tags.id} className={tags.color}>
+                              {tags.tag_name}
+                            </Badge>
+                          ))}
+                        </div>
+                      </TableCell>
                       <TableCell className="flex space-x-2">
                         <Button 
                           variant="outline" 
