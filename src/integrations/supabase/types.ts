@@ -12,6 +12,7 @@ export type Database = {
       bank_balances: {
         Row: {
           account_name: string
+          category_id: string | null
           created_at: string
           created_by: string | null
           date: string
@@ -22,6 +23,7 @@ export type Database = {
         }
         Insert: {
           account_name?: string
+          category_id?: string | null
           created_at?: string
           created_by?: string | null
           date: string
@@ -32,6 +34,7 @@ export type Database = {
         }
         Update: {
           account_name?: string
+          category_id?: string | null
           created_at?: string
           created_by?: string | null
           date?: string
@@ -39,6 +42,41 @@ export type Database = {
           id?: string
           notes?: string | null
           tags?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "bank_balances_category_id_fkey"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "categories"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      categories: {
+        Row: {
+          active: boolean | null
+          category_name: string
+          created_at: string
+          created_by: string | null
+          id: string
+          type: string
+        }
+        Insert: {
+          active?: boolean | null
+          category_name: string
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          type: string
+        }
+        Update: {
+          active?: boolean | null
+          category_name?: string
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          type?: string
         }
         Relationships: []
       }
@@ -178,6 +216,7 @@ export type Database = {
       }
       scheduled_items: {
         Row: {
+          category_id: string | null
           created_at: string
           created_by: string | null
           expected_amount: number | null
@@ -189,6 +228,7 @@ export type Database = {
           type: string | null
         }
         Insert: {
+          category_id?: string | null
           created_at?: string
           created_by?: string | null
           expected_amount?: number | null
@@ -200,6 +240,7 @@ export type Database = {
           type?: string | null
         }
         Update: {
+          category_id?: string | null
           created_at?: string
           created_by?: string | null
           expected_amount?: number | null
@@ -210,7 +251,15 @@ export type Database = {
           tags?: string | null
           type?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "scheduled_items_category_id_fkey"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "categories"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       user_roles: {
         Row: {

@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
@@ -12,11 +11,13 @@ import * as z from "zod";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { Edit2, Trash2 } from "lucide-react";
+import CategorySelect from "@/components/CategorySelect";
 
 const bankBalanceSchema = z.object({
   balance: z.coerce.number().positive("Balance must be a positive number"),
   notes: z.string().optional(),
-  tags: z.string().optional()
+  tags: z.string().optional(),
+  category_id: z.string().optional()
 });
 
 const BankBalancePage = () => {
@@ -28,7 +29,8 @@ const BankBalancePage = () => {
     defaultValues: {
       balance: 0,
       notes: "",
-      tags: ""
+      tags: "",
+      category_id: ""
     }
   });
 
@@ -39,7 +41,7 @@ const BankBalancePage = () => {
   const fetchRecentBalances = async () => {
     const { data, error } = await supabase
       .from('bank_balances')
-      .select('*')
+      .select('*, category:category_id(category_name)')
       .order('date', { ascending: false })
       .limit(5);
 
@@ -56,7 +58,8 @@ const BankBalancePage = () => {
         date: new Date().toISOString().split('T')[0],
         ending_balance: values.balance,
         notes: values.notes || null,
-        tags: values.tags || null
+        tags: values.tags || null,
+        category_id: values.category_id || null
       };
 
       const { data, error } = editingBalance 
@@ -64,7 +67,7 @@ const BankBalancePage = () => {
             .from('bank_balances')
             .update(payload)
             .eq('id', editingBalance.id)
-        : await supabase.from('bank_balances').insert(payload);
+        : await supabase.from('bank_balances').insert(payload).select();
 
       if (error) throw error;
 
@@ -85,7 +88,8 @@ const BankBalancePage = () => {
     form.reset({
       balance: balance.ending_balance,
       notes: balance.notes || "",
-      tags: balance.tags || ""
+      tags: balance.tags || "",
+      category_id: balance.category_id || ""
     });
   };
 
@@ -148,6 +152,14 @@ const BankBalancePage = () => {
                     </FormItem>
                   )}
                 />
+                
+                <CategorySelect
+                  type="Income"
+                  name="category_id"
+                  control={form.control}
+                  label="Category (Optional)"
+                />
+
                 <FormField
                   control={form.control}
                   name="notes"
@@ -197,6 +209,7 @@ const BankBalancePage = () => {
                 <TableRow>
                   <TableHead>Date</TableHead>
                   <TableHead>Balance</TableHead>
+                  <TableHead>Category</TableHead>
                   <TableHead>Notes</TableHead>
                   <TableHead>Tags</TableHead>
                   <TableHead>Actions</TableHead>
@@ -208,6 +221,7 @@ const BankBalancePage = () => {
                     <TableRow key={balance.id}>
                       <TableCell>{balance.date}</TableCell>
                       <TableCell>${balance.ending_balance.toFixed(2)}</TableCell>
+                      <TableCell>{balance.category?.category_name || '-'}</TableCell>
                       <TableCell>{balance.notes || '-'}</TableCell>
                       <TableCell>{balance.tags || '-'}</TableCell>
                       <TableCell className="flex space-x-2">
@@ -230,7 +244,7 @@ const BankBalancePage = () => {
                   ))
                 ) : (
                   <TableRow>
-                    <TableCell colSpan={5}>No data available</TableCell>
+                    <TableCell colSpan={6}>No data available</TableCell>
                   </TableRow>
                 )}
               </TableBody>

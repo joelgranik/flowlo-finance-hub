@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
@@ -12,13 +11,15 @@ import * as z from "zod";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { Edit2, Trash2 } from "lucide-react";
+import CategorySelect from "@/components/CategorySelect";
 
 const outflowSchema = z.object({
   description: z.string().min(1, "Description is required"),
   amount: z.coerce.number().positive("Amount must be a positive number"),
   date: z.string().min(1, "Date is required"),
   notes: z.string().optional(),
-  tags: z.string().optional()
+  tags: z.string().optional(),
+  category_id: z.string().min(1, "Category is required")
 });
 
 const OutflowsPage = () => {
@@ -32,7 +33,8 @@ const OutflowsPage = () => {
       amount: 0,
       date: "",
       notes: "",
-      tags: ""
+      tags: "",
+      category_id: ""
     }
   });
 
@@ -43,7 +45,7 @@ const OutflowsPage = () => {
   const fetchUpcomingOutflows = async () => {
     const { data, error } = await supabase
       .from('scheduled_items')
-      .select('*')
+      .select('*, category:category_id(category_name)')
       .eq('type', 'Outflow')
       .order('expected_date', { ascending: true });
 
@@ -62,7 +64,8 @@ const OutflowsPage = () => {
         expected_date: values.date,
         type: 'Outflow',
         notes: values.notes || null,
-        tags: values.tags || null
+        tags: values.tags || null,
+        category_id: values.category_id
       };
 
       const { data, error } = editingOutflow 
@@ -93,7 +96,8 @@ const OutflowsPage = () => {
       amount: outflow.expected_amount,
       date: outflow.expected_date,
       notes: outflow.notes || "",
-      tags: outflow.tags || ""
+      tags: outflow.tags || "",
+      category_id: outflow.category_id
     });
   };
 
@@ -182,6 +186,13 @@ const OutflowsPage = () => {
                     </FormItem>
                   )}
                 />
+                
+                <CategorySelect
+                  type="Expense"
+                  name="category_id"
+                  control={form.control}
+                />
+
                 <FormField
                   control={form.control}
                   name="notes"
@@ -232,6 +243,7 @@ const OutflowsPage = () => {
                   <TableHead>Date</TableHead>
                   <TableHead>Description</TableHead>
                   <TableHead>Amount</TableHead>
+                  <TableHead>Category</TableHead>
                   <TableHead>Notes</TableHead>
                   <TableHead>Tags</TableHead>
                   <TableHead>Actions</TableHead>
@@ -244,6 +256,7 @@ const OutflowsPage = () => {
                       <TableCell>{outflow.expected_date}</TableCell>
                       <TableCell>{outflow.item_name}</TableCell>
                       <TableCell>${outflow.expected_amount.toFixed(2)}</TableCell>
+                      <TableCell>{outflow.category?.category_name || '-'}</TableCell>
                       <TableCell>{outflow.notes || '-'}</TableCell>
                       <TableCell>{outflow.tags || '-'}</TableCell>
                       <TableCell className="flex space-x-2">
@@ -266,7 +279,7 @@ const OutflowsPage = () => {
                   ))
                 ) : (
                   <TableRow>
-                    <TableCell colSpan={6}>No upcoming outflows</TableCell>
+                    <TableCell colSpan={7}>No upcoming outflows</TableCell>
                   </TableRow>
                 )}
               </TableBody>
