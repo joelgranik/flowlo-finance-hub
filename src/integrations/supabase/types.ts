@@ -9,6 +9,36 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      bank_balance_tags: {
+        Row: {
+          bank_balance_id: string
+          tag_id: string
+        }
+        Insert: {
+          bank_balance_id: string
+          tag_id: string
+        }
+        Update: {
+          bank_balance_id?: string
+          tag_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "bank_balance_tags_bank_balance_id_fkey"
+            columns: ["bank_balance_id"]
+            isOneToOne: false
+            referencedRelation: "bank_balances"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "bank_balance_tags_tag_id_fkey"
+            columns: ["tag_id"]
+            isOneToOne: false
+            referencedRelation: "tags"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       bank_balances: {
         Row: {
           account_name: string
@@ -214,6 +244,36 @@ export type Database = {
         }
         Relationships: []
       }
+      scheduled_item_tags: {
+        Row: {
+          scheduled_item_id: string
+          tag_id: string
+        }
+        Insert: {
+          scheduled_item_id: string
+          tag_id: string
+        }
+        Update: {
+          scheduled_item_id?: string
+          tag_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "scheduled_item_tags_scheduled_item_id_fkey"
+            columns: ["scheduled_item_id"]
+            isOneToOne: false
+            referencedRelation: "scheduled_items"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "scheduled_item_tags_tag_id_fkey"
+            columns: ["tag_id"]
+            isOneToOne: false
+            referencedRelation: "tags"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       scheduled_items: {
         Row: {
           category_id: string | null
@@ -260,6 +320,33 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      tags: {
+        Row: {
+          active: boolean | null
+          color: string
+          created_at: string
+          created_by: string | null
+          id: string
+          tag_name: string
+        }
+        Insert: {
+          active?: boolean | null
+          color: string
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          tag_name: string
+        }
+        Update: {
+          active?: boolean | null
+          color?: string
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          tag_name?: string
+        }
+        Relationships: []
       }
       user_roles: {
         Row: {
