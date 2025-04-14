@@ -2,11 +2,12 @@
 import { useState, useCallback, useEffect } from 'react';
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { Database } from "@/integrations/supabase/types";
 
 export type User = {
   id: string;
   email: string;
-  role: string;
+  role: "Staff" | "Partner";
   created_at: string;
 };
 
@@ -37,7 +38,10 @@ export const useUsers = () => {
         const userRole = userRoles?.find(role => role.user_id === user.id);
         return {
           ...user,
-          role: userRole?.role || 'Unknown'
+          // Ensure role is either "Staff" or "Partner", defaulting to "Staff" if unknown
+          role: (userRole?.role === "Staff" || userRole?.role === "Partner") 
+            ? userRole.role 
+            : "Staff" as const
         };
       });
 
@@ -50,7 +54,7 @@ export const useUsers = () => {
     }
   }, []);
 
-  const updateUserRole = async (userId: string, role: string) => {
+  const updateUserRole = async (userId: string, role: "Staff" | "Partner") => {
     setIsUpdating(true);
     try {
       const { error } = await supabase
