@@ -1,4 +1,3 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -20,6 +19,7 @@ import BankBalancePage from "./pages/data-entry/BankBalancePage";
 import InflowsPage from "./pages/data-entry/InflowsPage";
 import OutflowsPage from "./pages/data-entry/OutflowsPage";
 import MembershipPage from "./pages/data-entry/MembershipPage";
+import MembershipTiersPage from "./pages/admin/MembershipTiersPage";
 
 const queryClient = new QueryClient();
 
@@ -57,6 +57,14 @@ const App = () => (
                 }
               />
               <Route path="/" element={<Navigate to="/dashboard" replace />} />
+              <Route
+                path="/admin/membership-tiers"
+                element={
+                  <ProtectedRoute requiredRole="Staff">
+                    <MembershipTiersPage />
+                  </ProtectedRoute>
+                }
+              />
             </Route>
             <Route path="*" element={<NotFound />} />
           </Routes>
