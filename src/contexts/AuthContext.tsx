@@ -36,7 +36,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   useEffect(() => {
     // Set up auth state listener first
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      (event, currentSession) => {
+      async (event, currentSession) => {
+        console.log("Auth state changed:", event);
         setSession(currentSession);
         setUser(currentSession?.user ?? null);
         
@@ -63,8 +64,17 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       setIsLoading(false);
     });
 
+    // Set up a periodic token refresh to ensure session stays active
+    const refreshInterval = setInterval(() => {
+      if (session) {
+        console.log("Refreshing auth session");
+        supabase.auth.refreshSession();
+      }
+    }, 10 * 60 * 1000); // Refresh every 10 minutes
+
     return () => {
       subscription.unsubscribe();
+      clearInterval(refreshInterval);
     };
   }, []);
 
