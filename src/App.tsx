@@ -15,6 +15,11 @@ import NotFound from "./pages/NotFound";
 import Layout from "./components/Layout";
 import ProtectedRoute from "./components/ProtectedRoute";
 
+// Data Entry Pages
+import BankBalancePage from "./pages/data-entry/BankBalancePage";
+import InflowsPage from "./pages/data-entry/InflowsPage";
+import OutflowsPage from "./pages/data-entry/OutflowsPage";
+
 const queryClient = new QueryClient();
 
 const App = () => (
@@ -28,21 +33,26 @@ const App = () => (
             <Route path="/login" element={<LoginPage />} />
             <Route path="/signup" element={<SignupPage />} />
             <Route element={<Layout />}>
-              <Route 
-                path="/data-entry" 
+              <Route
+                path="/data-entry"
                 element={
                   <ProtectedRoute requiredRole="Staff">
                     <DataEntryPage />
                   </ProtectedRoute>
-                } 
-              />
+                }
+              >
+                <Route path="bank-balance" element={<BankBalancePage />} />
+                <Route path="inflows" element={<InflowsPage />} />
+                <Route path="outflows" element={<OutflowsPage />} />
+                <Route index element={<Navigate to="bank-balance" replace />} />
+              </Route>
               <Route 
                 path="/dashboard" 
                 element={
                   <ProtectedRoute requiredRole="Partner">
                     <DashboardPage />
                   </ProtectedRoute>
-                } 
+                }
               />
               <Route path="/" element={<Navigate to="/dashboard" replace />} />
             </Route>

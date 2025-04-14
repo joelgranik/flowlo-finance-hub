@@ -9,6 +9,203 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      bank_balances: {
+        Row: {
+          account_name: string
+          created_at: string
+          created_by: string | null
+          date: string
+          ending_balance: number
+          id: string
+          notes: string | null
+        }
+        Insert: {
+          account_name?: string
+          created_at?: string
+          created_by?: string | null
+          date: string
+          ending_balance: number
+          id?: string
+          notes?: string | null
+        }
+        Update: {
+          account_name?: string
+          created_at?: string
+          created_by?: string | null
+          date?: string
+          ending_balance?: number
+          id?: string
+          notes?: string | null
+        }
+        Relationships: []
+      }
+      current_membership_counts: {
+        Row: {
+          active_members: number | null
+          created_at: string
+          created_by: string | null
+          id: string
+          membership_tier_id: string
+        }
+        Insert: {
+          active_members?: number | null
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          membership_tier_id: string
+        }
+        Update: {
+          active_members?: number | null
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          membership_tier_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "current_membership_counts_membership_tier_id_fkey"
+            columns: ["membership_tier_id"]
+            isOneToOne: false
+            referencedRelation: "membership_tiers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      daily_cash_log: {
+        Row: {
+          actual_inflows: number | null
+          actual_outflows: number | null
+          classpass_payout_received: number | null
+          created_at: string
+          created_by: string | null
+          end_of_day_balance: number | null
+          id: string
+          log_date: string
+          mindbody_expected_tomorrow: number | null
+          notes: string | null
+          shopify_expected_tomorrow: number | null
+          start_balance: number | null
+        }
+        Insert: {
+          actual_inflows?: number | null
+          actual_outflows?: number | null
+          classpass_payout_received?: number | null
+          created_at?: string
+          created_by?: string | null
+          end_of_day_balance?: number | null
+          id?: string
+          log_date: string
+          mindbody_expected_tomorrow?: number | null
+          notes?: string | null
+          shopify_expected_tomorrow?: number | null
+          start_balance?: number | null
+        }
+        Update: {
+          actual_inflows?: number | null
+          actual_outflows?: number | null
+          classpass_payout_received?: number | null
+          created_at?: string
+          created_by?: string | null
+          end_of_day_balance?: number | null
+          id?: string
+          log_date?: string
+          mindbody_expected_tomorrow?: number | null
+          notes?: string | null
+          shopify_expected_tomorrow?: number | null
+          start_balance?: number | null
+        }
+        Relationships: []
+      }
+      membership_tiers: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          description: string | null
+          id: string
+          is_active: boolean
+          monthly_fee: number | null
+          tier_name: string
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          id?: string
+          is_active?: boolean
+          monthly_fee?: number | null
+          tier_name: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          id?: string
+          is_active?: boolean
+          monthly_fee?: number | null
+          tier_name?: string
+        }
+        Relationships: []
+      }
+      reference_lists: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          id: string
+          reference_order: number | null
+          reference_type: string
+          reference_value: string
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          reference_order?: number | null
+          reference_type: string
+          reference_value: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          reference_order?: number | null
+          reference_type?: string
+          reference_value?: string
+        }
+        Relationships: []
+      }
+      scheduled_items: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          expected_amount: number | null
+          expected_date: string | null
+          id: string
+          item_name: string
+          notes: string | null
+          type: string | null
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          expected_amount?: number | null
+          expected_date?: string | null
+          id?: string
+          item_name: string
+          notes?: string | null
+          type?: string | null
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          expected_amount?: number | null
+          expected_date?: string | null
+          id?: string
+          item_name?: string
+          notes?: string | null
+          type?: string | null
+        }
+        Relationships: []
+      }
       user_roles: {
         Row: {
           created_at: string
