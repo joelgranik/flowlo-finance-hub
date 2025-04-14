@@ -51,52 +51,33 @@ export const useMembership = () => {
 
   const updateMembershipCount = async (updates: { membership_tier_id: string; active_members: number }[]) => {
     setIsUpdating(true);
-    let success = true;
     
     try {
-      for (const update of updates) {
-        // Check if a record already exists for this tier
-        const existingCount = membershipCounts.find(
-          count => count.membership_tier_id === update.membership_tier_id
+      // Using upsert with onConflict to ensure we have only one row per tier
+      const { error } = await supabase
+        .from('current_membership_counts')
+        .upsert(
+          updates.map(update => ({
+            membership_tier_id: update.membership_tier_id,
+            active_members: update.active_members
+          })),
+          { 
+            onConflict: 'membership_tier_id', 
+            ignoreDuplicates: false 
+          }
         );
-
-        let error;
         
-        if (existingCount) {
-          // Update existing record
-          const { error: updateError } = await supabase
-            .from('current_membership_counts')
-            .update({ active_members: update.active_members })
-            .eq('id', existingCount.id);
-          
-          error = updateError;
-        } else {
-          // Insert new record
-          const { error: insertError } = await supabase
-            .from('current_membership_counts')
-            .insert([{
-              membership_tier_id: update.membership_tier_id,
-              active_members: update.active_members
-            }]);
-          
-          error = insertError;
-        }
-
-        if (error) {
-          console.error('Error updating membership count:', error);
-          success = false;
-          throw error;
-        }
-      }
+      if (error) throw error;
       
-      if (success) {
-        toast.success("Membership counts updated successfully");
-        // Refresh the data to confirm changes
-        await fetchMembershipData();
-      }
+      toast.success("Membership counts updated successfully");
+      
+      // Wait for fetch to complete before returning
+      await fetchMembershipData();
+      return true;
     } catch (error) {
       toast.error("Failed to update membership counts");
       console.error('Error updating membership counts:', error);
+      return false;
     } finally {
       setIsUpdating(false);
     }

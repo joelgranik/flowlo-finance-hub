@@ -19,6 +19,7 @@ const MembershipTiersTable = () => {
     membershipCounts,
     updateMembershipCount,
     isUpdating,
+    fetchMembershipData,
   } = useMembership();
 
   const [counts, setCounts] = React.useState<Record<string, number>>({});
@@ -50,8 +51,13 @@ const MembershipTiersTable = () => {
       active_members: count
     }));
     
-    await updateMembershipCount(updates);
-    setHasChanges(false);
+    // Wait for the update to complete
+    const success = await updateMembershipCount(updates);
+    
+    if (success) {
+      // If successful, the fetchMembershipData in the hook will have already updated the state
+      setHasChanges(false);
+    }
   };
 
   return (
