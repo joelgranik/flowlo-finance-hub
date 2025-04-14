@@ -4,10 +4,15 @@ import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
 import { Session, User } from "@supabase/supabase-js";
 
+interface Profile {
+  first_name: string | null;
+}
+
 interface AuthContextType {
   user: User | null;
   session: Session | null;
   userRole: string | null;
+  profile: Profile | null;
   isLoading: boolean;
   isAuthenticated: boolean;
   signup: (email: string, password: string) => Promise<{ error: any }>;
@@ -30,8 +35,29 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
   const [userRole, setUserRole] = useState<string | null>(null);
+  const [profile, setProfile] = useState<Profile | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const navigate = useNavigate();
+
+  const fetchUserProfile = async (userId: string) => {
+    try {
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('first_name')
+        .eq('id', userId)
+        .single();
+
+      if (error) {
+        console.error("Error fetching user profile:", error);
+        setProfile(null);
+      } else {
+        setProfile(data);
+      }
+    } catch (error) {
+      console.error("Failed to fetch user profile:", error);
+      setProfile(null);
+    }
+  };
 
   useEffect(() => {
     // Set up auth state listener first
@@ -41,14 +67,16 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         setSession(currentSession);
         setUser(currentSession?.user ?? null);
         
-        // Fetch user role if authenticated
+        // Fetch user role and profile if authenticated
         if (currentSession?.user) {
           // Use setTimeout to avoid potential deadlocks
           setTimeout(() => {
             fetchUserRole(currentSession.user.id);
+            fetchUserProfile(currentSession.user.id);
           }, 0);
         } else {
           setUserRole(null);
+          setProfile(null);
         }
       }
     );
@@ -60,6 +88,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       
       if (currentSession?.user) {
         fetchUserRole(currentSession.user.id);
+        fetchUserProfile(currentSession.user.id);
       }
       setIsLoading(false);
     });
@@ -152,6 +181,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     user,
     session,
     userRole,
+    profile,
     isLoading,
     isAuthenticated: !!user,
     signup,

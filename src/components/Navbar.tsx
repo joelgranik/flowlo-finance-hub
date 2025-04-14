@@ -5,13 +5,17 @@ import { useAuth } from "@/contexts/AuthContext";
 import { LogOut, FileText, BarChart3, Settings } from "lucide-react";
 
 const Navbar = () => {
-  const { logout, user, userRole } = useAuth();
+  const { logout, user, userRole, profile } = useAuth();
   const navigate = useNavigate();
 
   const handleLogout = async () => {
     await logout();
     navigate("/login");
   };
+
+  // Determine the display name (first name, email username, or fallback)
+  const displayName = profile?.first_name || 
+    (user?.email ? user.email.split('@')[0] : 'User');
 
   return (
     <header className="border-b bg-white shadow-sm">
@@ -48,9 +52,9 @@ const Navbar = () => {
           </nav>
         </div>
         <div className="flex items-center gap-4">
-          {user && userRole && (
+          {user && (
             <span className="hidden md:inline text-sm font-medium text-gray-600">
-              Welcome, {userRole}!
+              Welcome, {displayName}!
             </span>
           )}
           <Button 
