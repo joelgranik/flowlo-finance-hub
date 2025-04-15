@@ -24,7 +24,7 @@ interface TagSelectProps {
 const TagSelect = ({ selectedTags, onTagsChange, className }: TagSelectProps) => {
   const [open, setOpen] = useState(false);
 
-  const { data: tags = [], isLoading } = useQuery({
+  const { data: tagsRaw, isLoading } = useQuery({
     queryKey: ['tags'],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -32,16 +32,22 @@ const TagSelect = ({ selectedTags, onTagsChange, className }: TagSelectProps) =>
         .select('*')
         .eq('active', true)
         .order('tag_name');
-      
       if (error) throw error;
       return data as Tag[];
     }
   });
 
+  // Defensive: always arrays
+  const tags = Array.isArray(tagsRaw) ? tagsRaw : [];
+  const safeSelectedTags = Array.isArray(selectedTags) ? selectedTags : [];
+
+  // Debug: log values
+  console.log('TagSelect: selectedTags', selectedTags, 'safeSelectedTags', safeSelectedTags, 'tags', tags);
+
   const handleTagToggle = (tagId: string) => {
-    const newSelectedTags = selectedTags.includes(tagId)
-      ? selectedTags.filter(id => id !== tagId)
-      : [...selectedTags, tagId];
+    const newSelectedTags = safeSelectedTags.includes(tagId)
+      ? safeSelectedTags.filter(id => id !== tagId)
+      : [...safeSelectedTags, tagId];
     onTagsChange(newSelectedTags);
   };
 
@@ -56,9 +62,9 @@ const TagSelect = ({ selectedTags, onTagsChange, className }: TagSelectProps) =>
             className="w-full justify-between"
           >
             <div className="flex gap-2 flex-wrap">
-              {selectedTags.length > 0 ? (
+              {safeSelectedTags.length > 0 && Array.isArray(tags) ? (
                 tags
-                  .filter(tag => selectedTags.includes(tag.id))
+                  .filter(tag => safeSelectedTags.includes(tag.id))
                   .map(tag => (
                     <Badge key={tag.id} className={tag.color}>
                       {tag.tag_name}
