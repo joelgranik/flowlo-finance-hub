@@ -44,7 +44,7 @@ const App = () => (
               <Route
                 path="/data-entry"
                 element={
-                  <ProtectedRoute requiredRole="Staff">
+                  <ProtectedRoute>
                     <DataEntryPage />
                   </ProtectedRoute>
                 }
@@ -58,7 +58,7 @@ const App = () => (
               <Route 
                 path="/dashboard" 
                 element={
-                  <ProtectedRoute requiredRole="Partner">
+                  <ProtectedRoute>
                     <DashboardPage />
                   </ProtectedRoute>
                 }
