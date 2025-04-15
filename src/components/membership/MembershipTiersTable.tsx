@@ -23,6 +23,8 @@ const MembershipTiersTable = () => {
 
   const [counts, setCounts] = React.useState<Record<string, number>>({});
   const [hasChanges, setHasChanges] = React.useState(false);
+  const [inputErrors, setInputErrors] = React.useState<Record<string, string>>({});
+  const [submitError, setSubmitError] = React.useState<string | null>(null);
 
   React.useEffect(() => {
     // Initialize counts from current membership counts
@@ -36,7 +38,17 @@ const MembershipTiersTable = () => {
   }, [membershipTiers, membershipCounts]);
 
   const handleCountChange = (tierId: string, value: string) => {
-    const numValue = parseInt(value, 10) || 0;
+    let error = '';
+    let numValue = parseInt(value, 10);
+    if (value === '' || isNaN(numValue)) {
+      error = 'Required';
+      numValue = 0;
+    } else if (numValue < 0) {
+      error = 'Must be non-negative';
+    } else if (!Number.isInteger(numValue)) {
+      error = 'Must be an integer';
+    }
+    setInputErrors(prev => ({ ...prev, [tierId]: error }));
     setCounts(prev => ({
       ...prev,
       [tierId]: numValue
@@ -45,19 +57,23 @@ const MembershipTiersTable = () => {
   };
 
   const handleSubmit = async () => {
+    setSubmitError(null);
+    // Prevent submit if any errors
+    const hasAnyError = Object.values(inputErrors).some(e => e);
+    if (hasAnyError) {
+      setSubmitError('Please fix validation errors before submitting.');
+      return;
+    }
     const updates = Object.entries(counts).map(([tierId, count]) => ({
       membership_tier_id: tierId,
       active_members: count as number // We know this is a number from handleCountChange
     }));
-    
     // Disable the button during update
     setHasChanges(false);
-    
     // Wait for the update to complete
     const success = await updateMembershipCount(updates);
-    
     if (!success) {
-      // If update failed, revert hasChanges to allow retrying
+      setSubmitError('Failed to update membership counts. Please try again.');
       setHasChanges(true);
       // Reset counts to last known good state
       const initialCounts: Record<string, number> = {};
@@ -97,16 +113,23 @@ const MembershipTiersTable = () => {
                   min={0}
                   className="w-32"
                   disabled={isUpdating}
+                  aria-invalid={!!inputErrors[tier.id]}
                 />
+                {inputErrors[tier.id] && (
+                  <div className="text-xs text-red-600 mt-1">{inputErrors[tier.id]}</div>
+                )}
               </TableCell>
             </TableRow>
           ))}
         </TableBody>
       </Table>
+      {submitError && (
+        <div className="text-sm text-red-600 mb-2">{submitError}</div>
+      )}
       <div className="flex justify-end">
         <Button 
           onClick={handleSubmit}
-          disabled={isUpdating || !hasChanges}
+          disabled={isUpdating || !hasChanges || Object.values(inputErrors).some(e => e)}
         >
           {isUpdating ? "Updating..." : hasChanges ? "Update Counts" : "Updated"}
         </Button>
