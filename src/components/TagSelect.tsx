@@ -82,21 +82,24 @@ const TagSelect = ({ selectedTags, onTagsChange, className }: TagSelectProps) =>
             <CommandInput placeholder="Search tags..." />
             <CommandEmpty>No tags found.</CommandEmpty>
             <CommandGroup>
-              {tags.map(tag => (
-                <CommandItem
-                  key={tag.id}
-                  value={tag.tag_name}
-                  onSelect={() => handleTagToggle(tag.id)}
-                >
-                  <Check
-                    className={cn(
-                      "mr-2 h-4 w-4",
-                      selectedTags.includes(tag.id) ? "opacity-100" : "opacity-0"
-                    )}
-                  />
-                  <Badge className={tag.color}>{tag.tag_name}</Badge>
-                </CommandItem>
-              ))}
+              {/* Defensive: tags always array */}
+              {Array.isArray(tags)
+                ? tags.map(tag => (
+                    <CommandItem
+                      key={tag.id}
+                      value={tag.tag_name}
+                      onSelect={() => handleTagToggle(tag.id)}
+                    >
+                      <Check
+                        className={cn(
+                          "mr-2 h-4 w-4",
+                          selectedTags.includes(tag.id) ? "opacity-100" : "opacity-0"
+                        )}
+                      />
+                      <Badge className={tag.color}>{tag.tag_name}</Badge>
+                    </CommandItem>
+                  ))
+                : null}
             </CommandGroup>
           </Command>
         </PopoverContent>
