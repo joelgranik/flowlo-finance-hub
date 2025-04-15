@@ -25,7 +25,6 @@ import MembershipTiersPage from "./pages/admin/MembershipTiersPage";
 // Admin Pages
 import AdminPage from "./pages/AdminPage";
 import CategoriesPage from "./pages/admin/CategoriesPage";
-
 import UsersPage from "./pages/admin/UsersPage";
 
 const queryClient = new QueryClient();
