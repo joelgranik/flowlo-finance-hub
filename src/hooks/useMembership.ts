@@ -76,33 +76,22 @@ export const useMembership = () => {
       const tierIds = updates.map(u => u.membership_tier_id);
       console.log("Updating counts for tiers:", tierIds);
 
-      // First delete existing records for these tiers
-      const { error: deleteError } = await supabase
-        .from('current_membership_counts')
-        .delete()
-        .in('membership_tier_id', tierIds);
-
-      if (deleteError) {
-        console.error("Error deleting existing counts:", deleteError);
-        throw deleteError;
-      }
-
-      // Then insert new records
+      // Prepare upsert records
       const newRecords = updates.map(update => ({
-        id: crypto.randomUUID(),
         membership_tier_id: update.membership_tier_id,
         active_members: update.active_members,
         created_at: new Date().toISOString(),
         created_by: session.user.id
       }));
 
-      const { error: insertError } = await supabase
+      // Use atomic upsert (insert with onConflict)
+      const { error: upsertError } = await supabase
         .from('current_membership_counts')
-        .insert(newRecords);
+        .upsert(newRecords, { onConflict: ['membership_tier_id'] });
 
-      if (insertError) {
-        console.error("Error inserting new counts:", insertError);
-        throw insertError;
+      if (upsertError) {
+        console.error("Error upserting membership counts:", upsertError);
+        throw upsertError;
       }
 
       // Fetch the latest data to ensure UI is in sync
