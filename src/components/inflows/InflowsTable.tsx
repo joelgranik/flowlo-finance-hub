@@ -2,7 +2,7 @@
 import React from 'react';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
+
 import { Edit2, Trash2 } from "lucide-react";
 
 interface Inflow {
@@ -12,13 +12,7 @@ interface Inflow {
   expected_amount: number;
   category?: { category_name: string };
   notes?: string;
-  scheduled_item_tags?: Array<{
-    tags: {
-      id: string;
-      tag_name: string;
-      color: string;
-    };
-  }>;
+
 }
 
 interface InflowsTableProps {
@@ -37,7 +31,6 @@ const InflowsTable = ({ inflows, onEdit, onDelete }: InflowsTableProps) => {
           <TableHead>Amount</TableHead>
           <TableHead>Category</TableHead>
           <TableHead>Notes</TableHead>
-
           <TableHead>Actions</TableHead>
         </TableRow>
       </TableHeader>
@@ -50,15 +43,7 @@ const InflowsTable = ({ inflows, onEdit, onDelete }: InflowsTableProps) => {
               <TableCell>${inflow.expected_amount.toFixed(2)}</TableCell>
               <TableCell>{inflow.category?.category_name || '-'}</TableCell>
               <TableCell>{inflow.notes || '-'}</TableCell>
-              <TableCell>
-                <div className="flex gap-1 flex-wrap">
-                  {inflow.scheduled_item_tags?.map(({ tags: tag }) => (
-                    <Badge key={tag.id} className={tag.color}>
-                      {tag.tag_name}
-                    </Badge>
-                  ))}
-                </div>
-              </TableCell>
+
               <TableCell className="flex space-x-2">
                 <Button 
                   variant="outline" 

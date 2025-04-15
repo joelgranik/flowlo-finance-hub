@@ -11,13 +11,7 @@ export type Inflow = {
   expected_amount: number;
   category?: { category_name: string };
   notes?: string;
-  scheduled_item_tags?: Array<{
-    tags: {
-      id: string;
-      tag_name: string;
-      color: string;
-    };
-  }>;
+
 }
 
 export const useInflows = () => {
@@ -29,11 +23,7 @@ export const useInflows = () => {
     try {
       const { data, error } = await supabase
         .from('scheduled_items')
-        .select(`
-          *,
-          category:category_id(category_name),
-          scheduled_item_tags(tag_id, tags:tag_id(id, tag_name, color))
-        `)
+        .select(`*, category:category_id(category_name)`)
         .eq('type', 'Inflow')
         .order('expected_date', { ascending: true });
 
@@ -76,24 +66,6 @@ export const useInflows = () => {
         result = data[0];
       }
 
-      // Always update tags: delete old ones for editing, insert new ones for both create and edit
-      if (editingInflow) {
-        const { error: delError } = await supabase
-          .from('scheduled_item_tags')
-          .delete()
-          .eq('scheduled_item_id', editingInflow.id);
-        if (delError) throw delError;
-      }
-      if (values.tagIds?.length > 0) {
-        const tagInserts = values.tagIds.map(tagId => ({
-          scheduled_item_id: result.id,
-          tag_id: tagId
-        }));
-        const { error: tagError } = await supabase
-          .from('scheduled_item_tags')
-          .insert(tagInserts);
-        if (tagError) throw tagError;
-      }
 
       toast.success(editingInflow 
         ? "Inflow updated successfully!" 

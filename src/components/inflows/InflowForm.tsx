@@ -27,7 +27,7 @@ interface InflowFormProps {
   onSubmit: (values: InflowFormData) => Promise<void>;
   initialData?: Partial<InflowFormData>;
   isEditing?: boolean;
-}
+} // No tag-related props
 
 const InflowForm = ({ onSubmit, initialData, isEditing }: InflowFormProps) => {
   const form = useForm<InflowFormData>({
@@ -51,26 +51,27 @@ const InflowForm = ({ onSubmit, initialData, isEditing }: InflowFormProps) => {
       <CardContent>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+            {/* Tag fields removed; only core inflow fields remain */}
             <FormField
               control={form.control}
               name="description"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Description</FormLabel>
-                  <FormControl>
-                    <Input placeholder="e.g., Client Payment" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
+                  
+                    <Input placeholder="e.g., Client Payment" {...field} 
+                  
+                  <FormMessage 
+                
               )}
-            />
+            
             <FormField
               control={form.control}
               name="amount"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Amount</FormLabel>
-                  <FormControl>
+                  
                     <div className="relative">
                       <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
                         <span className="text-gray-500">$</span>
@@ -81,32 +82,32 @@ const InflowForm = ({ onSubmit, initialData, isEditing }: InflowFormProps) => {
                         className="pl-8"
                         step="0.01"
                         {...field}
-                      />
+                      
                     </div>
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
+                  
+                  <FormMessage 
+                
               )}
-            />
+            
             <FormField
               control={form.control}
               name="date"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Expected Date</FormLabel>
-                  <FormControl>
-                    <Input type="date" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
+                  
+                    <Input type="date" {...field} 
+                  
+                  <FormMessage 
+                
               )}
-            />
+            
             
             <CategorySelect
               type="Income"
               name="category_id"
               control={form.control}
-            />
+            
 
             <FormField
               control={form.control}
@@ -114,23 +115,21 @@ const InflowForm = ({ onSubmit, initialData, isEditing }: InflowFormProps) => {
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Notes</FormLabel>
-                  <FormControl>
+                  
                     <Textarea 
                       placeholder="Optional notes about this inflow" 
                       {...field} 
-                    />
-                  </FormControl>
-                </FormItem>
+                    
+                  
+                
               )}
-            />
             
-            <FormField
-              control={form.control}
-              name="tagIds"
+            
+            
               render={({ field }) => (
 
               )}
-            />
+            
 
             <Button type="submit" className="w-full">
               {isEditing ? 'Update Inflow' : 'Record Inflow'}
