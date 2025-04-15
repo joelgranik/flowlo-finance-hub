@@ -9,7 +9,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import CategorySelect from "@/components/CategorySelect";
-import TagSelect from "@/components/TagSelect";
+
 
 const inflowSchema = z.object({
   description: z.string().min(1, "Description is required"),
@@ -18,7 +18,7 @@ const inflowSchema = z.object({
   notes: z.string().optional(),
 
   category_id: z.string().min(1, "Category is required"),
-  tagIds: z.array(z.string()).default([]),
+
 });
 
 export type InflowFormData = z.infer<typeof inflowSchema>;
