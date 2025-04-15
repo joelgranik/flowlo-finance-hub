@@ -15,9 +15,7 @@ import CategorySelect from "@/components/CategorySelect";
 
 const bankBalanceSchema = z.object({
   balance: z.coerce.number().positive("Balance must be a positive number"),
-  notes: z.string().optional(),
-  tags: z.string().optional(),
-  category_id: z.string().optional()
+  notes: z.string().optional()
 });
 
 const BankBalancePage = () => {
@@ -175,21 +173,7 @@ const BankBalancePage = () => {
                     </FormItem>
                   )}
                 />
-                <FormField
-                  control={form.control}
-                  name="tags"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Tags</FormLabel>
-                      <FormControl>
-                        <Input 
-                          placeholder="Optional tags (e.g., Personal, Business)" 
-                          {...field} 
-                        />
-                      </FormControl>
-                    </FormItem>
-                  )}
-                />
+
                 <Button type="submit" className="w-full">
                   {editingBalance ? 'Update Balance' : 'Save Balance'}
                 </Button>
