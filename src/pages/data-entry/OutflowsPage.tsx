@@ -66,14 +66,15 @@ const OutflowsPage = () => {
 
   const onSubmit = async (values) => {
     try {
-      const payload = {
+      const payload: any = {
         item_name: values.description,
-        expected_amount: values.amount,
+        expected_amount: Number(values.amount),
         expected_date: values.date,
-        type: 'Outflow',
         notes: values.notes || null,
-        category_id: values.category_id
+        category_id: values.category_id ? Number(values.category_id) : null
       };
+
+      Object.keys(payload).forEach(key => (payload[key] === null || payload[key] === "") && delete payload[key]);
 
       let result;
       if (editingOutflow) {
