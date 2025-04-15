@@ -76,23 +76,22 @@ export const useInflows = () => {
         result = data[0];
       }
 
+      // Always update tags: delete old ones for editing, insert new ones for both create and edit
+      if (editingInflow) {
+        const { error: delError } = await supabase
+          .from('scheduled_item_tags')
+          .delete()
+          .eq('scheduled_item_id', editingInflow.id);
+        if (delError) throw delError;
+      }
       if (values.tagIds?.length > 0) {
-        if (editingInflow) {
-          await supabase
-            .from('scheduled_item_tags')
-            .delete()
-            .eq('scheduled_item_id', editingInflow.id);
-        }
-
         const tagInserts = values.tagIds.map(tagId => ({
           scheduled_item_id: result.id,
           tag_id: tagId
         }));
-
         const { error: tagError } = await supabase
           .from('scheduled_item_tags')
           .insert(tagInserts);
-
         if (tagError) throw tagError;
       }
 
