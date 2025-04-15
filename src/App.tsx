@@ -55,6 +55,7 @@ const App = () => (
                 <Route path="membership" element={<MembershipPage />} />
                 <Route index element={<Navigate to="bank-balance" replace />} />
               </Route>
+              {/* Dashboard route: Only renders the distinct DashboardPage. No data entry or bank balance components are rendered here. */}
               <Route 
                 path="/dashboard" 
                 element={
