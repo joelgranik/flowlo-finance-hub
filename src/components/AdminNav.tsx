@@ -10,7 +10,7 @@ const AdminNav = () => {
   
   const navItems = [
     { path: "/admin/categories", label: "Categories" },
-    { path: "/admin/tags", label: "Tags" },
+
     { path: "/admin/users", label: "Users" }
   ];
   

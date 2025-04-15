@@ -38,7 +38,7 @@ const InflowForm = ({ onSubmit, initialData, isEditing }: InflowFormProps) => {
       date: initialData?.date || "",
       notes: initialData?.notes || "",
       category_id: initialData?.category_id || "",
-      tagIds: Array.isArray(initialData?.tagIds) ? initialData.tagIds : [],
+
     }
   });
 
@@ -128,15 +128,7 @@ const InflowForm = ({ onSubmit, initialData, isEditing }: InflowFormProps) => {
               control={form.control}
               name="tagIds"
               render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Tags</FormLabel>
-                  <FormControl>
-                    <TagSelect
-                      selectedTags={Array.isArray(field.value) ? field.value : []}
-                      onTagsChange={field.onChange}
-                    />
-                  </FormControl>
-                </FormItem>
+
               )}
             />
 

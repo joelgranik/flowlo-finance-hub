@@ -27,7 +27,7 @@ const BankBalancePage = () => {
     defaultValues: {
       balance: 0,
       notes: "",
-      tags: "",
+      
       category_id: ""
     }
   });
@@ -56,7 +56,7 @@ const BankBalancePage = () => {
         date: new Date().toISOString().split('T')[0],
         ending_balance: values.balance,
         notes: values.notes || null,
-        tags: values.tags || null,
+        
         category_id: values.category_id || null
       };
 
@@ -86,7 +86,7 @@ const BankBalancePage = () => {
     form.reset({
       balance: balance.ending_balance,
       notes: balance.notes || "",
-      tags: balance.tags || "",
+      
       category_id: balance.category_id || ""
     });
   };
@@ -195,7 +195,7 @@ const BankBalancePage = () => {
                   <TableHead>Balance</TableHead>
                   <TableHead>Category</TableHead>
                   <TableHead>Notes</TableHead>
-                  <TableHead>Tags</TableHead>
+                  
                   <TableHead>Actions</TableHead>
                 </TableRow>
               </TableHeader>
@@ -207,7 +207,7 @@ const BankBalancePage = () => {
                       <TableCell>${balance.ending_balance.toFixed(2)}</TableCell>
                       <TableCell>{balance.category?.category_name || '-'}</TableCell>
                       <TableCell>{balance.notes || '-'}</TableCell>
-                      <TableCell>{balance.tags || '-'}</TableCell>
+                      
                       <TableCell className="flex space-x-2">
                         <Button 
                           variant="outline" 

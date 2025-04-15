@@ -37,7 +37,7 @@ const InflowsTable = ({ inflows, onEdit, onDelete }: InflowsTableProps) => {
           <TableHead>Amount</TableHead>
           <TableHead>Category</TableHead>
           <TableHead>Notes</TableHead>
-          <TableHead>Tags</TableHead>
+
           <TableHead>Actions</TableHead>
         </TableRow>
       </TableHeader>

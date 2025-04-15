@@ -14,7 +14,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { Edit2, Trash2 } from "lucide-react";
 import CategorySelect from "@/components/CategorySelect";
-import TagSelect from "@/components/TagSelect";
+
 
 const outflowSchema = z.object({
   description: z.string().min(1, "Description is required"),
@@ -22,7 +22,7 @@ const outflowSchema = z.object({
   date: z.string().min(1, "Date is required"),
   notes: z.string().optional(),
   category_id: z.string().min(1, "Category is required"),
-  tagIds: z.array(z.string()).optional()
+
 });
 
 const OutflowsPage = () => {
@@ -37,7 +37,7 @@ const OutflowsPage = () => {
       date: "",
       notes: "",
       category_id: "",
-      tagIds: []
+
     }
   });
 
@@ -51,8 +51,8 @@ const OutflowsPage = () => {
       .select(`
         *,
         category:category_id(category_name),
-        scheduled_item_tags(
-          tags:tag_id(id, tag_name, color)
+
+
         )
       `)
       .eq('type', 'Outflow')
@@ -98,26 +98,26 @@ const OutflowsPage = () => {
         result = data;
       }
 
-      // Handle tag associations
+
       if (editingOutflow) {
-        // Delete existing tags
+
         await supabase
-          .from('scheduled_item_tags')
+
           .delete()
           .eq('scheduled_item_id', editingOutflow.id);
       }
 
-      if (values.tagIds?.length > 0) {
-        const tagInserts = values.tagIds.map(tagId => ({
+
+
           scheduled_item_id: result.id,
-          tag_id: tagId
+
         }));
 
-        const { error: tagError } = await supabase
-          .from('scheduled_item_tags')
-          .insert(tagInserts);
 
-        if (tagError) throw tagError;
+
+
+
+
       }
 
       toast.success(editingOutflow 
@@ -140,7 +140,7 @@ const OutflowsPage = () => {
       date: outflow.expected_date,
       notes: outflow.notes || "",
       category_id: outflow.category_id,
-      tagIds: outflow.scheduled_item_tags?.map(tag => tag.tags.id) || []
+
     });
   };
 
@@ -254,14 +254,14 @@ const OutflowsPage = () => {
                 
                 <FormField
                   control={form.control}
-                  name="tagIds"
+
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Tags</FormLabel>
+
                       <FormControl>
-                        <TagSelect
-                          selectedTags={field.value || []}
-                          onTagsChange={field.onChange}
+
+
+
                         />
                       </FormControl>
                     </FormItem>
@@ -290,7 +290,7 @@ const OutflowsPage = () => {
                   <TableHead>Amount</TableHead>
                   <TableHead>Category</TableHead>
                   <TableHead>Notes</TableHead>
-                  <TableHead>Tags</TableHead>
+        
                   <TableHead>Actions</TableHead>
                 </TableRow>
               </TableHeader>
@@ -305,8 +305,8 @@ const OutflowsPage = () => {
                       <TableCell>{outflow.notes || '-'}</TableCell>
                       <TableCell>
                         <div className="flex gap-1 flex-wrap">
-                          {outflow.scheduled_item_tags?.map(({ tags }) => (
-                            <Badge key={tags.id} className={tags.color}>
+
+
                               {tags.tag_name}
                             </Badge>
                           ))}
