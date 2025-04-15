@@ -25,7 +25,7 @@ import MembershipTiersPage from "./pages/admin/MembershipTiersPage";
 // Admin Pages
 import AdminPage from "./pages/AdminPage";
 import CategoriesPage from "./pages/admin/CategoriesPage";
-import TagsPage from "./pages/admin/TagsPage";
+
 import UsersPage from "./pages/admin/UsersPage";
 
 const queryClient = new QueryClient();
@@ -76,7 +76,7 @@ const App = () => (
                 }
               >
                 <Route path="categories" element={<CategoriesPage />} />
-                <Route path="tags" element={<TagsPage />} />
+                
                 <Route path="users" element={<UsersPage />} />
                 <Route path="membership-tiers" element={<MembershipTiersPage />} />
                 <Route index element={<Navigate to="categories" replace />} />
