@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
@@ -6,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Badge } from "@/components/ui/badge";
+
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
@@ -108,13 +107,7 @@ const OutflowsPage = () => {
       }
 
 
-
-          scheduled_item_id: result.id,
-
-        }));
-
-
-      }
+      // Removed stray tag-related code block here.
 
       toast.success(editingOutflow 
         ? "Outflow updated successfully!" 
@@ -248,22 +241,6 @@ const OutflowsPage = () => {
                   )}
                 />
                 
-                <FormField
-                  control={form.control}
-
-                  render={({ field }) => (
-                    <FormItem>
-
-                      <FormControl>
-
-
-
-                        />
-                      </FormControl>
-                    </FormItem>
-                  )}
-                />
-
                 <Button type="submit" className="w-full">
                   {editingOutflow ? 'Update Outflow' : 'Record Outflow'}
                 </Button>
@@ -286,7 +263,6 @@ const OutflowsPage = () => {
                   <TableHead>Amount</TableHead>
                   <TableHead>Category</TableHead>
                   <TableHead>Notes</TableHead>
-        
                   <TableHead>Actions</TableHead>
                 </TableRow>
               </TableHeader>
@@ -299,15 +275,6 @@ const OutflowsPage = () => {
                       <TableCell>${outflow.expected_amount.toFixed(2)}</TableCell>
                       <TableCell>{outflow.category?.category_name || '-'}</TableCell>
                       <TableCell>{outflow.notes || '-'}</TableCell>
-                      <TableCell>
-                        <div className="flex gap-1 flex-wrap">
-
-
-                              {tags.tag_name}
-                            </Badge>
-                          ))}
-                        </div>
-                      </TableCell>
                       <TableCell className="flex space-x-2">
                         <Button 
                           variant="outline" 

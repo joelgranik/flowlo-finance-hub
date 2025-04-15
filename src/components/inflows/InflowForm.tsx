@@ -58,20 +58,20 @@ const InflowForm = ({ onSubmit, initialData, isEditing }: InflowFormProps) => {
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Description</FormLabel>
-                  
-                    <Input placeholder="e.g., Client Payment" {...field} 
-                  
-                  <FormMessage 
-                
+                  <FormControl>
+                    <Input placeholder="e.g., Client Payment" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
               )}
-            
+            />
             <FormField
               control={form.control}
               name="amount"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Amount</FormLabel>
-                  
+                  <FormControl>
                     <div className="relative">
                       <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
                         <span className="text-gray-500">$</span>
@@ -82,55 +82,47 @@ const InflowForm = ({ onSubmit, initialData, isEditing }: InflowFormProps) => {
                         className="pl-8"
                         step="0.01"
                         {...field}
-                      
+                      />
                     </div>
-                  
-                  <FormMessage 
-                
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
               )}
-            
+            />
             <FormField
               control={form.control}
               name="date"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Expected Date</FormLabel>
-                  
-                    <Input type="date" {...field} 
-                  
-                  <FormMessage 
-                
+                  <FormControl>
+                    <Input type="date" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
               )}
-            
-            
+            />
             <CategorySelect
               type="Income"
               name="category_id"
               control={form.control}
-            
-
+            />
             <FormField
               control={form.control}
               name="notes"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Notes</FormLabel>
-                  
-                    <Textarea 
-                      placeholder="Optional notes about this inflow" 
-                      {...field} 
-                    
-                  
-                
+                  <FormControl>
+                    <Textarea
+                      placeholder="Optional notes about this inflow"
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
               )}
-            
-            
-            
-              render={({ field }) => (
-
-              )}
-            
-
+            />
             <Button type="submit" className="w-full">
               {isEditing ? 'Update Inflow' : 'Record Inflow'}
             </Button>
