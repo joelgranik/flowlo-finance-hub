@@ -1,9 +1,11 @@
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { useAuth } from "@/contexts/AuthContext";
+import { useBankBalance } from "@/hooks/useBankBalance";
 
 const DashboardPage = () => {
   const { user } = useAuth();
+  const { bankBalance, isLoading, error } = useBankBalance();
 
   return (
     <div className="space-y-6">
@@ -17,11 +19,19 @@ const DashboardPage = () => {
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">Total Balance</CardTitle>
+            <CardTitle className="text-sm font-medium text-muted-foreground">Bank Balance</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-brand-600">$24,500.00</div>
-            <p className="text-xs text-muted-foreground">+2.5% from last month</p>
+            {isLoading ? (
+              <div className="text-2xl font-bold text-brand-600">Loading...</div>
+            ) : error ? (
+              <div className="text-2xl font-bold text-danger-500">Error</div>
+            ) : (
+              <div className="text-2xl font-bold text-brand-600">
+                {bankBalance !== null ? `$${bankBalance.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}` : '—'}
+              </div>
+            )}
+            <p className="text-xs text-muted-foreground">Latest input from Bank Balance form</p>
           </CardContent>
         </Card>
         
