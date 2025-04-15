@@ -2,10 +2,12 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { useAuth } from "@/contexts/AuthContext";
 import { useBankBalance } from "@/hooks/useBankBalance";
+import { useInflowsTotals } from "@/hooks/useInflowsTotals";
 
 const DashboardPage = () => {
   const { user } = useAuth();
   const { bankBalance, isLoading, error } = useBankBalance();
+  const { tomorrowTotal, next7DaysTotal, isLoading: inflowsLoading, error: inflowsError } = useInflowsTotals();
 
   return (
     <div className="space-y-6">
@@ -37,11 +39,37 @@ const DashboardPage = () => {
         
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">Income</CardTitle>
+            <CardTitle className="text-sm font-medium text-muted-foreground">Tomorrow's Inflows</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-success-500">$8,350.00</div>
-            <p className="text-xs text-muted-foreground">+5.2% from last month</p>
+            {inflowsLoading ? (
+              <div className="text-2xl font-bold text-success-500">Loading...</div>
+            ) : inflowsError ? (
+              <div className="text-2xl font-bold text-danger-500">Error</div>
+            ) : (
+              <div className="text-2xl font-bold text-success-500">
+                {tomorrowTotal !== null ? `$${tomorrowTotal.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}` : '—'}
+              </div>
+            )}
+            <p className="text-xs text-muted-foreground">Expected inflows for tomorrow</p>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm font-medium text-muted-foreground">Inflows Over Next 7 Days</CardTitle>
+          </CardHeader>
+          <CardContent>
+            {inflowsLoading ? (
+              <div className="text-2xl font-bold text-success-500">Loading...</div>
+            ) : inflowsError ? (
+              <div className="text-2xl font-bold text-danger-500">Error</div>
+            ) : (
+              <div className="text-2xl font-bold text-success-500">
+                {next7DaysTotal !== null ? `$${next7DaysTotal.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}` : '—'}
+              </div>
+            )}
+            <p className="text-xs text-muted-foreground">Expected inflows for the next 7 days</p>
           </CardContent>
         </Card>
         
