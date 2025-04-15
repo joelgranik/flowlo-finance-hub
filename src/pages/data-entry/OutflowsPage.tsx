@@ -117,8 +117,9 @@ const OutflowsPage = () => {
       form.reset();
       setEditingOutflow(null);
       fetchUpcomingOutflows();
-    } catch (error) {
-      toast.error("Error saving outflow: " + error.message);
+    } catch (error: any) {
+      console.error('Supabase error:', error);
+      toast.error("Error saving outflow: " + (error.message || JSON.stringify(error)));
     }
   };
 
