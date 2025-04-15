@@ -64,26 +64,25 @@ const MembershipTiersTable = () => {
       setSubmitError('Please fix validation errors before submitting.');
       return;
     }
+    // Store previous state for rollback
+    const prevCounts = { ...counts };
     const updates = Object.entries(counts).map(([tierId, count]) => ({
       membership_tier_id: tierId,
-      active_members: count as number // We know this is a number from handleCountChange
+      active_members: count as number
     }));
-    // Disable the button during update
     setHasChanges(false);
-    // Wait for the update to complete
+    // Optimistically update UI (already done by local state)
     const success = await updateMembershipCount(updates);
     if (!success) {
-      setSubmitError('Failed to update membership counts. Please try again.');
+      setSubmitError('Failed to update membership counts. Rolling back.');
       setHasChanges(true);
-      // Reset counts to last known good state
-      const initialCounts: Record<string, number> = {};
-      membershipTiers.forEach((tier) => {
-        const count = membershipCounts.find(c => c.membership_tier_id === tier.id);
-        initialCounts[tier.id] = count?.active_members || 0;
-      });
-      setCounts(initialCounts);
+      setCounts(prevCounts); // Roll back to previous state
+    } else {
+      // Refresh data from backend to ensure UI is in sync
+      await fetchMembershipData();
     }
   };
+
 
   return (
     <div className="space-y-4">
