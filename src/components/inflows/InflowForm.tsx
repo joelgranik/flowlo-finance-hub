@@ -38,7 +38,7 @@ const InflowForm = ({ onSubmit, initialData, isEditing }: InflowFormProps) => {
       date: initialData?.date || "",
       notes: initialData?.notes || "",
       category_id: initialData?.category_id || "",
-      tagIds: initialData?.tagIds || [],
+      tagIds: Array.isArray(initialData?.tagIds) ? initialData.tagIds : [],
     }
   });
 
