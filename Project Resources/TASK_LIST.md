@@ -10,27 +10,27 @@
     _Now uses atomic upsert (onConflict) in Supabase for reliable, race-free updates. Unique constraint added to DB._
 - [x] Add proper error handling and validation  
     _Client-side validation for non-negative integers, inline error messages, and clear UI feedback for update failures._
-- [ ] Implement optimistic UI updates
-- [ ] Add loading states during updates
+- [x] Implement optimistic UI updates
+- [x] Add loading states during updates
 - [x] Implement proper refresh mechanism after updates
 
 ### 2. Authentication & Session Management
 **Issue**: Users experiencing unexpected logouts and session issues
-- [ ] Review Supabase session configuration
-- [ ] Implement proper session persistence
-- [ ] Add session refresh mechanism
-- [ ] Improve error handling for auth state changes
-- [ ] Add proper loading states during auth checks
-- [ ] Implement proper redirect handling after session expiry
+- [x] Review Supabase session configuration
+- [x] Implement proper session persistence
+- [x] Add session refresh mechanism
+- [x] Improve error handling for auth state changes
+- [x] Add proper loading states during auth checks
+- [x] Implement proper redirect handling after session expiry
 
 ### 3. Role-Based Access Control
 **Issue**: Overly restrictive and inconsistent role permissions
-- [ ] Simplify role system (remove Partner/Staff distinction temporarily)
-- [ ] Update ProtectedRoute component logic
-- [ ] Make Admin section accessible to all authenticated users
-- [ ] Make Dashboard accessible to all authenticated users
-- [ ] Implement proper role checking in navigation
-- [ ] Add proper error messages for unauthorized access
+- [x] Simplify role system (remove Partner/Staff distinction temporarily)
+- [x] Update ProtectedRoute component logic
+- [x] Make Admin section accessible to all authenticated users
+- [x] Make Dashboard accessible to all authenticated users
+- [x] Implement proper role checking in navigation
+- [x] Add proper error messages for unauthorized access
 
 ### 4. Navigation & Routing
 **Issue**: Confusion between Dashboard and Data Entry routes
