@@ -47,13 +47,7 @@ const OutflowsPage = () => {
   const fetchUpcomingOutflows = async () => {
     const { data, error } = await supabase
       .from('scheduled_items')
-      .select(`
-        *,
-        category:category_id(category_name),
-
-
-        )
-      `)
+      .select('*, category:category_id(category_name)')
       .eq('type', 'Outflow')
       .order('expected_date', { ascending: true });
 
