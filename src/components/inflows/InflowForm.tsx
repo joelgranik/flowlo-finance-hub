@@ -16,9 +16,9 @@ const inflowSchema = z.object({
   amount: z.coerce.number().positive("Amount must be a positive number"),
   date: z.string().min(1, "Date is required"),
   notes: z.string().optional(),
-  tags: z.string().optional(),
+
   category_id: z.string().min(1, "Category is required"),
-  tagIds: z.array(z.string()).optional(),
+  tagIds: z.array(z.string()).default([]),
 });
 
 export type InflowFormData = z.infer<typeof inflowSchema>;
@@ -132,7 +132,7 @@ const InflowForm = ({ onSubmit, initialData, isEditing }: InflowFormProps) => {
                   <FormLabel>Tags</FormLabel>
                   <FormControl>
                     <TagSelect
-                      selectedTags={field.value || []}
+                      selectedTags={Array.isArray(field.value) ? field.value : []}
                       onTagsChange={field.onChange}
                     />
                   </FormControl>
