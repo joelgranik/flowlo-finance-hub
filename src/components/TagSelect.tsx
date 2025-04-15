@@ -99,7 +99,7 @@ const TagSelect = ({ selectedTags, onTagsChange, className }: TagSelectProps) =>
                       <Badge className={tag.color}>{tag.tag_name}</Badge>
                     </CommandItem>
                   ))
-                : null}
+                : <></>}
             </CommandGroup>
           </Command>
         </PopoverContent>
