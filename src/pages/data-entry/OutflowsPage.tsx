@@ -114,10 +114,6 @@ const OutflowsPage = () => {
         }));
 
 
-
-
-
-
       }
 
       toast.success(editingOutflow 
