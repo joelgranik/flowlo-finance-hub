@@ -70,11 +70,12 @@ const OutflowsPage = () => {
         item_name: values.description,
         expected_amount: Number(values.amount),
         expected_date: values.date,
+        type: 'Outflow',
         notes: values.notes || null,
-        category_id: values.category_id ? Number(values.category_id) : null
+        category_id: values.category_id
       };
 
-      Object.keys(payload).forEach(key => (payload[key] === null || payload[key] === "") && delete payload[key]);
+      if (!payload.notes) delete payload.notes;
 
       let result;
       if (editingOutflow) {
