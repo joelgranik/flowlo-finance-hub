@@ -66,6 +66,8 @@ const OutflowsPage = () => {
 
   const onSubmit = async (values) => {
     try {
+      // Debug: log raw form values
+      console.log('Outflow form values:', values);
       const payload: any = {
         item_name: values.description,
         expected_amount: Number(values.amount),
@@ -74,8 +76,23 @@ const OutflowsPage = () => {
         notes: values.notes || null,
         category_id: values.category_id
       };
-
       if (!payload.notes) delete payload.notes;
+      // Debug: log outgoing payload
+      console.log('Outflow payload to Supabase:', payload);
+      // Validation: check required fields
+      if (!payload.item_name || !payload.expected_date || !payload.expected_amount || !payload.type || !payload.category_id) {
+        toast.error('Please fill out all required fields.');
+        return;
+      }
+      if (isNaN(payload.expected_amount) || payload.expected_amount <= 0) {
+        toast.error('Amount must be a positive number.');
+        return;
+      }
+      // Basic UUID format check for category_id
+      if (!/^([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})$/i.test(payload.category_id)) {
+        toast.error('Please select a valid category.');
+        return;
+      }
 
       let result;
       if (editingOutflow) {
