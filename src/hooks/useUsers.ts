@@ -7,8 +7,10 @@ import { Database } from "@/integrations/supabase/types";
 export type User = {
   id: string;
   email: string;
-  role: "Staff" | "Partner";
+  name?: string | null;
+  role: "Owner" | "Staff" | "Partner";
   created_at: string;
+  last_login?: string | null;
 };
 
 export const useUsers = () => {
@@ -19,33 +21,12 @@ export const useUsers = () => {
   const fetchUsers = useCallback(async () => {
     setIsLoading(true);
     try {
-      // Query user_roles table for role information
-      const { data: userRoles, error: userRolesError } = await supabase
-        .from('user_roles')
-        .select('user_id, role');
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('id, email, name, role, created_at, last_login');
 
-      if (userRolesError) throw userRolesError;
-
-      // Get auth users (via edge function or view if available)
-      // For this simplified version, we'll create a basic structure
-      const mockUsers = [
-        { id: '1', email: 'admin@example.com', created_at: new Date().toISOString() },
-        { id: '2', email: 'staff@example.com', created_at: new Date().toISOString() },
-      ];
-
-      // Combine the data
-      const combinedUsers = mockUsers.map(user => {
-        const userRole = userRoles?.find(role => role.user_id === user.id);
-        return {
-          ...user,
-          // Ensure role is either "Staff" or "Partner", defaulting to "Staff" if unknown
-          role: (userRole?.role === "Staff" || userRole?.role === "Partner") 
-            ? userRole.role 
-            : "Staff" as const
-        };
-      });
-
-      setUsers(combinedUsers);
+      if (error) throw error;
+      setUsers(data || []);
     } catch (error) {
       toast.error("Failed to fetch users");
       console.error('Error fetching users:', error);
@@ -54,16 +35,15 @@ export const useUsers = () => {
     }
   }, []);
 
-  const updateUserRole = async (userId: string, role: "Staff" | "Partner") => {
+  const updateUserRole = async (userId: string, role: "Owner" | "Staff" | "Partner") => {
     setIsUpdating(true);
     try {
       const { error } = await supabase
-        .from('user_roles')
+        .from('profiles')
         .update({ role })
-        .eq('user_id', userId);
+        .eq('id', userId);
 
       if (error) throw error;
-
       toast.success("User role updated successfully");
       await fetchUsers();
       return true;
@@ -76,6 +56,79 @@ export const useUsers = () => {
     }
   };
 
+  // Invite a new user (Owner only)
+  const inviteUser = async (email: string, name: string, role: "Owner" | "Staff" | "Partner") => {
+    setIsUpdating(true);
+    try {
+      // Invite user via Supabase Auth (send invite email)
+      const { data: inviteData, error: inviteError } = await supabase.auth.admin.inviteUserByEmail(email, {
+        emailRedirectTo: window.location.origin + "/login",
+        data: { name, role },
+      });
+      if (inviteError) throw inviteError;
+      // Insert into profiles table
+      if (inviteData?.user?.id) {
+        const { error: profileError } = await supabase
+          .from('profiles')
+          .insert({ id: inviteData.user.id, email, name, role });
+        if (profileError) throw profileError;
+      }
+      toast.success(`Invite sent to ${email}. The email will mention FloLo Cash Flow.`);
+      await fetchUsers();
+      return true;
+    } catch (error) {
+      toast.error("Failed to invite user");
+      console.error('Error inviting user:', error);
+      return false;
+    } finally {
+      setIsUpdating(false);
+    }
+  };
+
+  // Update user info (Owner only)
+  const updateUserInfo = async (userId: string, updates: Partial<Omit<User, "id" | "role">>) => {
+    setIsUpdating(true);
+    try {
+      const { error } = await supabase
+        .from('profiles')
+        .update(updates)
+        .eq('id', userId);
+      if (error) throw error;
+      toast.success("User info updated successfully");
+      await fetchUsers();
+      return true;
+    } catch (error) {
+      toast.error("Failed to update user info");
+      console.error('Error updating user info:', error);
+      return false;
+    } finally {
+      setIsUpdating(false);
+    }
+  };
+
+  // Delete user (Owner only)
+  const deleteUser = async (userId: string) => {
+    setIsUpdating(true);
+    try {
+      // Remove from profiles
+      const { error } = await supabase
+        .from('profiles')
+        .delete()
+        .eq('id', userId);
+      if (error) throw error;
+      toast.success("User deleted successfully");
+      await fetchUsers();
+      return true;
+    } catch (error) {
+      toast.error("Failed to delete user");
+      console.error('Error deleting user:', error);
+      return false;
+    } finally {
+      setIsUpdating(false);
+    }
+  };
+
+
   // Initial fetch
   useEffect(() => {
     fetchUsers();
@@ -86,7 +139,10 @@ export const useUsers = () => {
     isLoading,
     isUpdating,
     fetchUsers,
-    updateUserRole
+    updateUserRole,
+    inviteUser,
+    updateUserInfo,
+    deleteUser,
   };
 };
 
