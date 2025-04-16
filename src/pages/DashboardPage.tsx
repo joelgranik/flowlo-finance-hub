@@ -3,11 +3,13 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { useAuth } from "@/contexts/AuthContext";
 import { useBankBalance } from "@/hooks/useBankBalance";
 import { useInflowsTotals } from "@/hooks/useInflowsTotals";
+import { useOutflowsTotals } from "@/hooks/useOutflowsTotals";
 
 const DashboardPage = () => {
   const { user } = useAuth();
   const { bankBalance, isLoading, error } = useBankBalance();
   const { tomorrowTotal, next7DaysTotal, isLoading: inflowsLoading, error: inflowsError } = useInflowsTotals();
+  const { tomorrowTotal: outTomorrow, next7DaysTotal: outNext7, isLoading: outflowsLoading, error: outflowsError } = useOutflowsTotals();
 
   return (
     <div className="space-y-6">
@@ -18,7 +20,7 @@ const DashboardPage = () => {
         </p>
       </div>
       
-      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
         <Card>
           <CardHeader className="pb-2">
             <CardTitle className="text-sm font-medium text-muted-foreground">Bank Balance</CardTitle>
@@ -36,7 +38,6 @@ const DashboardPage = () => {
             <p className="text-xs text-muted-foreground">Latest input from Bank Balance form</p>
           </CardContent>
         </Card>
-        
         <Card>
           <CardHeader className="pb-2">
             <CardTitle className="text-sm font-medium text-muted-foreground">Tomorrow's Inflows</CardTitle>
@@ -54,32 +55,38 @@ const DashboardPage = () => {
             <p className="text-xs text-muted-foreground">Expected inflows for tomorrow</p>
           </CardContent>
         </Card>
-
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">Inflows Over Next 7 Days</CardTitle>
+            <CardTitle className="text-sm font-medium text-muted-foreground">Tomorrow's Outflows</CardTitle>
           </CardHeader>
           <CardContent>
-            {inflowsLoading ? (
-              <div className="text-2xl font-bold text-success-500">Loading...</div>
-            ) : inflowsError ? (
+            {outflowsLoading ? (
+              <div className="text-2xl font-bold text-danger-500">Loading...</div>
+            ) : outflowsError ? (
               <div className="text-2xl font-bold text-danger-500">Error</div>
             ) : (
-              <div className="text-2xl font-bold text-success-500">
-                {next7DaysTotal !== null ? `$${next7DaysTotal.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}` : '—'}
+              <div className="text-2xl font-bold text-danger-500">
+                {outTomorrow !== null ? `$${outTomorrow.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}` : '—'}
               </div>
             )}
-            <p className="text-xs text-muted-foreground">Expected inflows for the next 7 days</p>
+            <p className="text-xs text-muted-foreground">Expected outflows for tomorrow</p>
           </CardContent>
         </Card>
-        
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">Expenses</CardTitle>
+            <CardTitle className="text-sm font-medium text-muted-foreground">Outflows Over Next 7 Days</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-danger-500">$5,240.00</div>
-            <p className="text-xs text-muted-foreground">-1.4% from last month</p>
+            {outflowsLoading ? (
+              <div className="text-2xl font-bold text-danger-500">Loading...</div>
+            ) : outflowsError ? (
+              <div className="text-2xl font-bold text-danger-500">Error</div>
+            ) : (
+              <div className="text-2xl font-bold text-danger-500">
+                {outNext7 !== null ? `$${outNext7.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}` : '—'}
+              </div>
+            )}
+            <p className="text-xs text-muted-foreground">Expected outflows for the next 7 days</p>
           </CardContent>
         </Card>
       </div>
