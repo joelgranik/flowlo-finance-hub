@@ -48,8 +48,13 @@ export const useCategories = () => {
       toast.success("Category created successfully");
       await fetchCategories();
       return true;
-    } catch (error) {
-      toast.error("Failed to create category");
+    } catch (error: any) {
+      // Check for unique constraint violation
+      if (error?.code === '23505' || (typeof error?.message === 'string' && error.message.includes('unique constraint'))) {
+        toast.error("A category with this name and type already exists.");
+      } else {
+        toast.error("Failed to create category");
+      }
       console.error('Error creating category:', error);
       return false;
     } finally {
