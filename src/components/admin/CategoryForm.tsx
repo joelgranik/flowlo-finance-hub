@@ -79,9 +79,8 @@ const CategoryForm = ({ onSubmit, initialData, isUpdating }: CategoryFormProps) 
                   </SelectTrigger>
                 </FormControl>
                 <SelectContent>
-                  <SelectItem value="inflow">Inflow</SelectItem>
-                  <SelectItem value="outflow">Outflow</SelectItem>
-                  <SelectItem value="both">Both</SelectItem>
+                  <SelectItem value="Income">Income</SelectItem>
+                  <SelectItem value="Expense">Expense</SelectItem>
                 </SelectContent>
               </Select>
               <FormMessage />
