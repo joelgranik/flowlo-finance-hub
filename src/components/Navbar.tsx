@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
 import { LogOut, FileText, BarChart3, Settings, Menu } from "lucide-react";
 import React from "react";
-import { useProjectedSurplus } from '@/hooks/useProjectedSurplus'
+import { useProjectedSurplus } from '@/hooks/useProjectedSurplus';
 
 const LOGO_SRC = "/flolo-logo.png";
 
@@ -14,7 +14,6 @@ const Navbar = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = React.useState(false);
 
   const { data, isLoading, error } = useProjectedSurplus();
-  const surplus = data?.surplus;
 
   const handleLogout = async () => {
     await logout();
@@ -30,11 +29,16 @@ const Navbar = () => {
     <>
       <Link
         to="/dashboard"
-        className="flex items-center gap-1.5 text-sm font-medium text-gray-600 transition-colors hover:text-brand-600"
+        className="flex items-center gap-1.5 text-sm font-medium text-gray-600 hover:text-brand-600"
         onClick={() => setMobileMenuOpen(false)}
       >
         <BarChart3 className="h-4 w-4" />
         <span>Dashboard</span>
+        { !isLoading && data?.surplus < 0 && (
+          <span className="ml-1 inline-block rounded-full bg-red-600 px-2 py-0.5 text-xs font-semibold text-white">
+            Low Balance
+          </span>
+        ) }
       </Link>
       <Link
         to="/data-entry"
@@ -106,11 +110,11 @@ const Navbar = () => {
           <nav className="flex gap-7 flex-1">
             <Link
               to="/dashboard"
-              className="flex items-center gap-1.5 text-sm font-medium text-white transition-colors hover:text-purple-200"
+              className="flex items-center gap-1.5 text-sm font-medium text-gray-600 hover:text-brand-600"
             >
               <BarChart3 className="h-4 w-4" />
               <span>Dashboard</span>
-              { !isLoading && surplus < 0 && (
+              { !isLoading && data?.surplus < 0 && (
                 <span className="ml-1 inline-block rounded-full bg-red-600 px-2 py-0.5 text-xs font-semibold text-white">
                   Low Balance
                 </span>
