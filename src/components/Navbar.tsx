@@ -41,24 +41,14 @@ const Navbar = () => {
         <span>Data Entry</span>
       </Link>
       {userRole === "Staff" && (
-        <>
-          <Link
-            to="/admin"
-            className="flex items-center gap-1.5 text-sm font-medium text-gray-600 transition-colors hover:text-brand-600"
-            onClick={() => setMobileMenuOpen(false)}
-          >
-            <Settings className="h-4 w-4" />
-            <span>Admin</span>
-          </Link>
-          <Link
-            to="/admin/membership-tiers"
-            className="flex items-center gap-1.5 text-sm font-medium text-gray-600 transition-colors hover:text-brand-600"
-            onClick={() => setMobileMenuOpen(false)}
-          >
-            <span className="h-4 w-4 inline-block">🏷️</span>
-            <span>Membership Tiers</span>
-          </Link>
-        </>
+        <Link
+          to="/admin"
+          className="flex items-center gap-1.5 text-sm font-medium text-gray-600 transition-colors hover:text-brand-600"
+          onClick={() => setMobileMenuOpen(false)}
+        >
+          <Settings className="h-4 w-4" />
+          <span>Admin</span>
+        </Link>
       )}
     </>
   );

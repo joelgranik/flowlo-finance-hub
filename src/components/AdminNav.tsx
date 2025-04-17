@@ -9,9 +9,9 @@ const AdminNav = () => {
   };
   
   const navItems = [
-    { path: "/admin/categories", label: "Categories" },
-
-    { path: "/admin/users", label: "Users" }
+    { path: "/admin/categories", label: "🗂️ Categories" },
+    { path: "/admin/users", label: "👤 Users" },
+    { path: "/admin/membership-tiers", label: "🏷️ Membership Tiers" }
   ];
   
   return (
