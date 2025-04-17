@@ -70,14 +70,7 @@ const Navbar = () => {
       <Settings className="h-4 w-4" />
       <span>Admin</span>
     </Link>
-    <Link
-      to="/admin/membership-tiers"
-      className="flex items-center gap-1.5 text-sm font-medium text-gray-600 transition-colors hover:text-brand-600"
-      onClick={() => setMobileMenuOpen(false)}
-    >
-      <span className="h-4 w-4 inline-block">🏷️</span>
-      <span>Membership Tiers</span>
-    </Link>
+
   </>
 )}
 
@@ -130,13 +123,7 @@ const Navbar = () => {
       <Settings className="h-4 w-4" />
       <span>Admin</span>
     </Link>
-    <Link
-      to="/admin/membership-tiers"
-      className="flex items-center gap-1.5 text-sm font-medium text-white transition-colors hover:text-purple-200"
-    >
-      <span className="h-4 w-4 inline-block">🏷️</span>
-      <span>Membership Tiers</span>
-    </Link>
+
   </>
 )}
           </nav>
