@@ -12,6 +12,8 @@ import { useCashFlowWaterfallData } from "@/hooks/useCashFlowWaterfallData";
 import WaterfallChart from "@/components/dashboard/WaterfallChart";
 import { useUpcomingFlowsTableData } from "@/hooks/useUpcomingFlowsTableData";
 import UpcomingFlowsTable from "@/components/dashboard/UpcomingFlowsTable";
+import { useTopUpcomingFlows } from "@/hooks/useTopUpcomingFlows";
+import TopFlowsTable from "@/components/dashboard/TopFlowsTable";
 
 const DashboardPage = () => {
   const { user } = useAuth();
@@ -219,7 +221,7 @@ const DashboardPage = () => {
         </Card>
       </div>
       
-      <div className="grid gap-6 md:grid-cols-2">
+      <div className="grid gap-6 lg:grid-cols-4 md:grid-cols-2">
         <Card className="col-span-1">
           <CardHeader>
             <CardTitle>Upcoming Flows</CardTitle>
@@ -240,7 +242,7 @@ const DashboardPage = () => {
             })()}
           </CardContent>
         </Card>
-        
+
         <Card className="col-span-1">
           <CardHeader>
             <CardTitle>Cash Flow Waterfall</CardTitle>
@@ -257,6 +259,50 @@ const DashboardPage = () => {
                 return <div className="h-[240px] flex items-center justify-center text-muted-foreground">No data</div>;
               } else {
                 return <WaterfallChart data={data} />;
+              }
+            })()}
+          </CardContent>
+        </Card>
+
+        {/* Top 5 Upcoming Outflows */}
+        <Card className="col-span-1">
+          <CardHeader>
+            <CardTitle>Top 5 Upcoming Outflows</CardTitle>
+            <CardDescription>Sorted by amount (desc)</CardDescription>
+          </CardHeader>
+          <CardContent className="p-0">
+            {(() => {
+              const { outflows, isLoading, error } = useTopUpcomingFlows();
+              if (isLoading) {
+                return <div className="h-[240px] flex items-center justify-center text-brand-600">Loading...</div>;
+              } else if (error) {
+                return <div className="h-[240px] flex items-center justify-center text-danger-500">Error</div>;
+              } else if (!outflows || outflows.length === 0) {
+                return <div className="h-[240px] flex items-center justify-center text-muted-foreground">No data</div>;
+              } else {
+                return <TopFlowsTable data={outflows} type="outflow" />;
+              }
+            })()}
+          </CardContent>
+        </Card>
+
+        {/* Top 5 Expected Inflows */}
+        <Card className="col-span-1">
+          <CardHeader>
+            <CardTitle>Top 5 Expected Inflows</CardTitle>
+            <CardDescription>Sorted by amount (desc)</CardDescription>
+          </CardHeader>
+          <CardContent className="p-0">
+            {(() => {
+              const { inflows, isLoading, error } = useTopUpcomingFlows();
+              if (isLoading) {
+                return <div className="h-[240px] flex items-center justify-center text-brand-600">Loading...</div>;
+              } else if (error) {
+                return <div className="h-[240px] flex items-center justify-center text-danger-500">Error</div>;
+              } else if (!inflows || inflows.length === 0) {
+                return <div className="h-[240px] flex items-center justify-center text-muted-foreground">No data</div>;
+              } else {
+                return <TopFlowsTable data={inflows} type="inflow" />;
               }
             })()}
           </CardContent>
