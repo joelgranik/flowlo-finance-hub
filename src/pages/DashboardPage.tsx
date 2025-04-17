@@ -30,12 +30,12 @@ const DashboardPage = () => {
         </p>
       </div>
       
-      <div className="grid gap-4 gap-y-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-6">
-        <Card className="min-w-[220px]">
+      <div className="grid gap-4 gap-y-6 grid-cols-1 sm:grid-cols-2 md:grid-cols-[auto-fit,minmax(320px,1fr)]">
+        <Card className="min-w-[220px] w-full h-full flex-1">
           <CardHeader className="pb-2">
             <CardTitle className="text-sm font-medium text-muted-foreground">Bank Balance</CardTitle>
           </CardHeader>
-          <CardContent className="p-2 sm:p-4">
+          <CardContent className="p-2 sm:p-4 w-full h-full flex-1">
             {isLoading ? (
               <div className="text-2xl font-bold text-brand-600">Loading...</div>
             ) : error ? (
@@ -50,11 +50,11 @@ const DashboardPage = () => {
         </Card>
 
         {/* 7-Day Cash Trend Card */}
-        <Card className="min-w-[220px]">
+        <Card className="min-w-[220px] w-full h-full flex-1">
           <CardHeader className="pb-2">
             <CardTitle className="text-sm font-medium text-muted-foreground">7-Day Cash Trend</CardTitle>
           </CardHeader>
-          <CardContent className="p-2 sm:p-4">
+          <CardContent className="p-2 sm:p-4 w-full h-full flex-1">
             {(() => {
               const { recentNet, priorNet, percentChange, isLoading: trendLoading, error: trendError } = useCashTrend();
               if (trendLoading) {
@@ -85,11 +85,11 @@ const DashboardPage = () => {
         </Card>
 
         {/* 30-Day Membership Revenue Forecast Card */}
-        <Card className="min-w-[220px]">
+        <Card className="min-w-[220px] w-full h-full flex-1">
           <CardHeader className="pb-2">
             <CardTitle className="text-sm font-medium text-muted-foreground">30-Day Membership Revenue Forecast</CardTitle>
           </CardHeader>
-          <CardContent className="p-2 sm:p-4">
+          <CardContent className="p-2 sm:p-4 w-full h-full flex-1">
             {(() => {
               const { forecast, isLoading: forecastLoading, error: forecastError } = useMembershipRevenueForecast();
               if (forecastLoading) {
@@ -113,11 +113,11 @@ const DashboardPage = () => {
         </Card>
 
         {/* Projected Cash Surplus/Deficit Card */}
-        <Card className="min-w-[220px]">
+        <Card className="min-w-[220px] w-full h-full flex-1">
           <CardHeader className="pb-2">
             <CardTitle className="text-sm font-medium text-muted-foreground">Projected Cash Surplus/Deficit</CardTitle>
           </CardHeader>
-          <CardContent className="p-2 sm:p-4">
+          <CardContent className="p-2 sm:p-4 w-full h-full flex-1">
             {(() => {
               const { net, inflows, outflows, isLoading: projLoading, error: projError } = useProjectedSurplusDeficit();
               if (projLoading) {
@@ -141,11 +141,11 @@ const DashboardPage = () => {
           </CardContent>
         </Card>
         {/* Active Membership Count Card */}
-        <Card className="min-w-[220px]">
+        <Card className="min-w-[220px] w-full h-full flex-1">
           <CardHeader className="pb-2">
             <CardTitle className="text-sm font-medium text-muted-foreground">Active Membership Count</CardTitle>
           </CardHeader>
-          <CardContent className="p-2 sm:p-4">
+          <CardContent className="p-2 sm:p-4 w-full h-full flex-1">
             {(() => {
               const { count, isLoading: countLoading, error: countError } = useActiveMembershipCount();
               if (countLoading) {
@@ -168,11 +168,11 @@ const DashboardPage = () => {
           </CardContent>
         </Card>
 
-        <Card className="min-w-[220px]">
+        <Card className="min-w-[220px] w-full h-full flex-1">
           <CardHeader className="pb-2">
             <CardTitle className="text-sm font-medium text-muted-foreground">Tomorrow's Inflows</CardTitle>
           </CardHeader>
-          <CardContent className="p-2 sm:p-4">
+          <CardContent className="p-2 sm:p-4 w-full h-full flex-1">
             {inflowsLoading ? (
               <div className="text-2xl font-bold text-success-500">Loading...</div>
             ) : inflowsError ? (
@@ -185,11 +185,11 @@ const DashboardPage = () => {
             <p className="text-xs text-muted-foreground">Expected inflows for tomorrow</p>
           </CardContent>
         </Card>
-        <Card className="min-w-[220px]">
+        <Card className="min-w-[220px] w-full h-full flex-1">
           <CardHeader className="pb-2">
             <CardTitle className="text-sm font-medium text-muted-foreground">Tomorrow's Outflows</CardTitle>
           </CardHeader>
-          <CardContent className="p-2 sm:p-4">
+          <CardContent className="p-2 sm:p-4 w-full h-full flex-1">
             {outflowsLoading ? (
               <div className="text-2xl font-bold text-danger-500">Loading...</div>
             ) : outflowsError ? (
@@ -202,11 +202,11 @@ const DashboardPage = () => {
             <p className="text-xs text-muted-foreground">Expected outflows for tomorrow</p>
           </CardContent>
         </Card>
-        <Card className="min-w-[220px]">
+        <Card className="min-w-[220px] w-full h-full flex-1">
           <CardHeader className="pb-2">
             <CardTitle className="text-sm font-medium text-muted-foreground">Outflows Over Next 7 Days</CardTitle>
           </CardHeader>
-          <CardContent className="p-2 sm:p-4">
+          <CardContent className="p-2 sm:p-4 w-full h-full flex-1">
             {outflowsLoading ? (
               <div className="text-2xl font-bold text-danger-500">Loading...</div>
             ) : outflowsError ? (
@@ -221,13 +221,13 @@ const DashboardPage = () => {
         </Card>
       </div>
       
-      <div className="grid gap-4 gap-y-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="grid gap-4 gap-y-6 grid-cols-1 sm:grid-cols-2 md:grid-cols-[auto-fit,minmax(320px,1fr)]">
         <Card className="col-span-1 min-w-[220px]">
           <CardHeader>
             <CardTitle>Upcoming Flows</CardTitle>
             <CardDescription>Next 14 days: inflows & outflows</CardDescription>
           </CardHeader>
-          <CardContent className="p-2 sm:p-3 md:p-4 overflow-x-auto">
+          <CardContent className="p-2 sm:p-3 md:p-4 overflow-x-auto w-full h-full flex-1">
             {(() => {
               const { data, isLoading, error } = useUpcomingFlowsTableData();
               if (isLoading) {
@@ -248,7 +248,7 @@ const DashboardPage = () => {
             <CardTitle>Cash Flow Waterfall</CardTitle>
             <CardDescription>Last 30 days: inflows, outflows, balances</CardDescription>
           </CardHeader>
-          <CardContent className="p-2 sm:p-3 md:p-4 overflow-x-auto">
+          <CardContent className="p-2 sm:p-3 md:p-4 overflow-x-auto w-full h-full flex-1">
             {(() => {
               const { data, isLoading, error } = useCashFlowWaterfallData();
               if (isLoading) {
@@ -270,7 +270,7 @@ const DashboardPage = () => {
             <CardTitle>Top 5 Upcoming Outflows</CardTitle>
             <CardDescription>Sorted by amount (desc)</CardDescription>
           </CardHeader>
-          <CardContent className="p-2 sm:p-3 md:p-4 overflow-x-auto">
+          <CardContent className="p-2 sm:p-3 md:p-4 overflow-x-auto w-full h-full flex-1">
             {(() => {
               const { outflows, isLoading, error } = useTopUpcomingFlows();
               if (isLoading) {
@@ -292,7 +292,7 @@ const DashboardPage = () => {
             <CardTitle>Top 5 Expected Inflows</CardTitle>
             <CardDescription>Sorted by amount (desc)</CardDescription>
           </CardHeader>
-          <CardContent className="p-2 sm:p-3 md:p-4 overflow-x-auto">
+          <CardContent className="p-2 sm:p-3 md:p-4 overflow-x-auto w-full h-full flex-1">
             {(() => {
               const { inflows, isLoading, error } = useTopUpcomingFlows();
               if (isLoading) {
