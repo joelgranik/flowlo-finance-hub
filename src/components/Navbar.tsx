@@ -4,8 +4,6 @@ import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
 import { LogOut, FileText, BarChart3, Settings, Menu } from "lucide-react";
 import React from "react";
-import { useQuery } from '@tanstack/react-query'
-import { supabase } from '@/integrations/supabase/client'
 import { useProjectedSurplus } from '@/hooks/useProjectedSurplus'
 
 const LOGO_SRC = "/flolo-logo.png";
@@ -15,22 +13,7 @@ const Navbar = () => {
   const navigate = useNavigate();
   const [mobileMenuOpen, setMobileMenuOpen] = React.useState(false);
 
-  // fetch latest bank balance
-  const { data: bankData = { balance_amount: 0 }, isLoading: upcomingBalanceLoading } = useQuery(
-    ['latestBalance'],
-    async () => {
-      const { data } = await supabase
-        .from('bank_balances')
-        .select('balance_amount')
-        .order('created_at', { ascending: false })
-        .limit(1)
-      return data?.[0] ?? { balance_amount: 0 }
-    }
-  )
-
-  // fetch 7‑day surplus
-  const { data: proj = { surplus: 0 } } = useProjectedSurplus()
-  const upcomingBalance = (bankData.balance_amount || 0) + (proj.surplus || 0)
+  const { data, isLoading } = useProjectedSurplus()
 
   const handleLogout = async () => {
     await logout();
@@ -51,8 +34,8 @@ const Navbar = () => {
       >
         <BarChart3 className="h-4 w-4" />
         <span>Dashboard</span>
-        { !upcomingBalanceLoading && upcomingBalance < 0 && (
-          <span className="ml-1 inline-block rounded-full bg-red-600 px-2 py-0.5 text-xs text-white">
+        {!isLoading && data?.surplus < 0 && (
+          <span className="ml-1 inline-block rounded-full bg-red-600 px-2 py-0.5 text-xs font-semibold text-white">
             Low Balance
           </span>
         ) }
