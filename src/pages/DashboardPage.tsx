@@ -8,6 +8,8 @@ import { useCashTrend } from "@/hooks/useCashTrend";
 import { useMembershipRevenueForecast } from "@/hooks/useMembershipRevenueForecast";
 import { useProjectedSurplusDeficit } from "@/hooks/useProjectedSurplusDeficit";
 import { useActiveMembershipCount } from "@/hooks/useActiveMembershipCount";
+import { useCashFlowWaterfallData } from "@/hooks/useCashFlowWaterfallData";
+import WaterfallChart from "@/components/dashboard/WaterfallChart";
 
 const DashboardPage = () => {
   const { user } = useAuth();
@@ -240,13 +242,22 @@ const DashboardPage = () => {
         
         <Card className="col-span-1">
           <CardHeader>
-            <CardTitle>Cash Flow</CardTitle>
-            <CardDescription>Monthly income vs. expenses</CardDescription>
+            <CardTitle>Cash Flow Waterfall</CardTitle>
+            <CardDescription>Last 30 days: inflows, outflows, balances</CardDescription>
           </CardHeader>
           <CardContent className="p-0">
-            <div className="h-[240px] flex items-center justify-center p-4 text-muted-foreground">
-              Chart placeholder - Cash flow visualization
-            </div>
+            {(() => {
+              const { data, isLoading, error } = useCashFlowWaterfallData();
+              if (isLoading) {
+                return <div className="h-[240px] flex items-center justify-center text-brand-600">Loading...</div>;
+              } else if (error) {
+                return <div className="h-[240px] flex items-center justify-center text-danger-500">Error</div>;
+              } else if (!data || data.length === 0) {
+                return <div className="h-[240px] flex items-center justify-center text-muted-foreground">No data</div>;
+              } else {
+                return <WaterfallChart data={data} />;
+              }
+            })()}
           </CardContent>
         </Card>
       </div>
