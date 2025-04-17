@@ -10,6 +10,8 @@ import { useProjectedSurplusDeficit } from "@/hooks/useProjectedSurplusDeficit";
 import { useActiveMembershipCount } from "@/hooks/useActiveMembershipCount";
 import { useCashFlowWaterfallData } from "@/hooks/useCashFlowWaterfallData";
 import WaterfallChart from "@/components/dashboard/WaterfallChart";
+import { useUpcomingFlowsTableData } from "@/hooks/useUpcomingFlowsTableData";
+import UpcomingFlowsTable from "@/components/dashboard/UpcomingFlowsTable";
 
 const DashboardPage = () => {
   const { user } = useAuth();
@@ -220,23 +222,22 @@ const DashboardPage = () => {
       <div className="grid gap-6 md:grid-cols-2">
         <Card className="col-span-1">
           <CardHeader>
-            <CardTitle>Recent Transactions</CardTitle>
-            <CardDescription>Your latest financial activity</CardDescription>
+            <CardTitle>Upcoming Flows</CardTitle>
+            <CardDescription>Next 14 days: inflows & outflows</CardDescription>
           </CardHeader>
           <CardContent className="p-0">
-            <div className="divide-y">
-              {Array.from({ length: 5 }).map((_, i) => (
-                <div key={i} className="flex items-center justify-between p-4">
-                  <div className="space-y-1">
-                    <p className="text-sm font-medium">Placeholder Transaction {i + 1}</p>
-                    <p className="text-xs text-muted-foreground">April {14 - i}, 2025</p>
-                  </div>
-                  <div className={`text-sm font-medium ${i % 2 === 0 ? 'text-danger-500' : 'text-success-500'}`}>
-                    {i % 2 === 0 ? '-' : '+'}${(Math.random() * 1000).toFixed(2)}
-                  </div>
-                </div>
-              ))}
-            </div>
+            {(() => {
+              const { data, isLoading, error } = useUpcomingFlowsTableData();
+              if (isLoading) {
+                return <div className="h-[240px] flex items-center justify-center text-brand-600">Loading...</div>;
+              } else if (error) {
+                return <div className="h-[240px] flex items-center justify-center text-danger-500">Error</div>;
+              } else if (!data || data.length === 0) {
+                return <div className="h-[240px] flex items-center justify-center text-muted-foreground">No data</div>;
+              } else {
+                return <UpcomingFlowsTable data={data} />;
+              }
+            })()}
           </CardContent>
         </Card>
         
