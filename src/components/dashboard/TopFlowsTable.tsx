@@ -9,7 +9,7 @@ interface Props {
 export const TopFlowsTable: React.FC<Props> = ({ data, type }) => {
   return (
     <div className="overflow-x-auto">
-      <table className="min-w-full text-sm">
+      <table className="min-w-[340px] w-full text-xs md:text-sm mx-auto">
         <thead>
           <tr className="border-b">
             <th className="px-2 py-1 text-left">Date</th>

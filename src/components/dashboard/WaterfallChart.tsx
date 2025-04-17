@@ -8,7 +8,7 @@ interface Props {
 
 export const WaterfallChart: React.FC<Props> = ({ data }) => {
   return (
-    <div className="w-full h-64">
+    <div className="w-full h-60 sm:h-64 md:h-72 lg:h-80 mx-auto">
       <ResponsiveContainer width="100%" height="100%">
         <BarChart data={data} margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
           <CartesianGrid strokeDasharray="3 3" />
