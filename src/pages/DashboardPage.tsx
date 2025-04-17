@@ -6,6 +6,7 @@ import { useInflowsTotals } from "@/hooks/useInflowsTotals";
 import { useOutflowsTotals } from "@/hooks/useOutflowsTotals";
 import { useCashTrend } from "@/hooks/useCashTrend";
 import { useMembershipRevenueForecast } from "@/hooks/useMembershipRevenueForecast";
+import { useProjectedSurplusDeficit } from "@/hooks/useProjectedSurplusDeficit";
 
 const DashboardPage = () => {
   const { user } = useAuth();
@@ -96,6 +97,35 @@ const DashboardPage = () => {
                     </div>
                     <p className="text-xs text-muted-foreground">
                       Next 30 days, all active members
+                    </p>
+                  </div>
+                );
+              }
+            })()}
+          </CardContent>
+        </Card>
+
+        {/* Projected Cash Surplus/Deficit Card */}
+        <Card>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm font-medium text-muted-foreground">Projected Cash Surplus/Deficit</CardTitle>
+          </CardHeader>
+          <CardContent>
+            {(() => {
+              const { net, inflows, outflows, isLoading: projLoading, error: projError } = useProjectedSurplusDeficit();
+              if (projLoading) {
+                return <div className="text-2xl font-bold text-brand-600">Loading...</div>;
+              } else if (projError) {
+                return <div className="text-2xl font-bold text-danger-500">Error</div>;
+              } else {
+                const isSurplus = net !== null && net >= 0;
+                return (
+                  <div>
+                    <div className={`text-2xl font-bold ${isSurplus ? 'text-success-500' : 'text-danger-500'}`}>
+                      {net !== null ? `${isSurplus ? '+' : '-'}$${Math.abs(net).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}` : '—'}
+                    </div>
+                    <p className="text-xs text-muted-foreground">
+                      Next 7 days: inflows <span className="text-success-600">${inflows !== null ? inflows.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : '—'}</span>, outflows <span className="text-danger-600">${outflows !== null ? outflows.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : '—'}</span>
                     </p>
                   </div>
                 );
