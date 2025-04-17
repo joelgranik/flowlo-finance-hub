@@ -5,6 +5,7 @@ import { useBankBalance } from "@/hooks/useBankBalance";
 import { useInflowsTotals } from "@/hooks/useInflowsTotals";
 import { useOutflowsTotals } from "@/hooks/useOutflowsTotals";
 import { useCashTrend } from "@/hooks/useCashTrend";
+import { useMembershipRevenueForecast } from "@/hooks/useMembershipRevenueForecast";
 
 const DashboardPage = () => {
   const { user } = useAuth();
@@ -67,6 +68,34 @@ const DashboardPage = () => {
                     </div>
                     <p className="text-xs text-muted-foreground">
                       vs. prior 7 days
+                    </p>
+                  </div>
+                );
+              }
+            })()}
+          </CardContent>
+        </Card>
+
+        {/* 30-Day Membership Revenue Forecast Card */}
+        <Card>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm font-medium text-muted-foreground">30-Day Membership Revenue Forecast</CardTitle>
+          </CardHeader>
+          <CardContent>
+            {(() => {
+              const { forecast, isLoading: forecastLoading, error: forecastError } = useMembershipRevenueForecast();
+              if (forecastLoading) {
+                return <div className="text-2xl font-bold text-brand-600">Loading...</div>;
+              } else if (forecastError) {
+                return <div className="text-2xl font-bold text-danger-500">Error</div>;
+              } else {
+                return (
+                  <div>
+                    <div className="text-2xl font-bold text-brand-600">
+                      {forecast !== null ? `$${forecast.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}` : '—'}
+                    </div>
+                    <p className="text-xs text-muted-foreground">
+                      Next 30 days, all active members
                     </p>
                   </div>
                 );
