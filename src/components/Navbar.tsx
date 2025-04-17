@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
 import { LogOut, FileText, BarChart3, Settings, Menu } from "lucide-react";
 import React from "react";
+import { useProjectedSurplus } from '@/hooks/useProjectedSurplus'
 
 const LOGO_SRC = "/flolo-logo.png";
 
@@ -11,6 +12,9 @@ const Navbar = () => {
   const { logout, user, userRole, profile } = useAuth();
   const navigate = useNavigate();
   const [mobileMenuOpen, setMobileMenuOpen] = React.useState(false);
+
+  const { data, isLoading, error } = useProjectedSurplus();
+  const surplus = data?.surplus;
 
   const handleLogout = async () => {
     await logout();
@@ -106,6 +110,11 @@ const Navbar = () => {
             >
               <BarChart3 className="h-4 w-4" />
               <span>Dashboard</span>
+              { !isLoading && surplus < 0 && (
+                <span className="ml-1 inline-block rounded-full bg-red-600 px-2 py-0.5 text-xs font-semibold text-white">
+                  Low Balance
+                </span>
+              ) }
             </Link>
             <Link
               to="/data-entry"
