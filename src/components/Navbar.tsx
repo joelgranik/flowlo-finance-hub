@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
 import { LogOut, FileText, BarChart3, Settings, Menu } from "lucide-react";
 import React from "react";
-import { useProjectedSurplus } from '@/hooks/useProjectedSurplus';
+import { useProjectedSurplusDeficit } from '@/hooks/useCashProjections';
 
 const LOGO_SRC = "/flolo-logo.png";
 
@@ -13,7 +13,7 @@ const Navbar = () => {
   const navigate = useNavigate();
   const [mobileMenuOpen, setMobileMenuOpen] = React.useState(false);
 
-  const { data, isLoading, error } = useProjectedSurplus();
+  const { data, isLoading, error } = useProjectedSurplusDeficit();
 
   const handleLogout = async () => {
     await logout();
@@ -29,7 +29,7 @@ const Navbar = () => {
     <>
       <Link
         to="/dashboard"
-        className="flex items-center gap-1.5 text-sm font-medium text-gray-600 hover:text-brand-600"
+        className="flex items-center gap-1.5 text-sm font-medium text-white hover:text-white/80"
         onClick={() => setMobileMenuOpen(false)}
       >
         <BarChart3 className="h-4 w-4" />
@@ -96,7 +96,7 @@ const Navbar = () => {
         </button>
 
         {/* Logo (left) */}
-        <Link to="/dashboard" className="flex items-center z-10 mr-6">
+        <Link to="/dashboard" className="flex items-center gap-1.5 text-sm font-medium text-white hover:text-white/80">
           <img
             src={LOGO_SRC}
             alt="FloLo Logo"
@@ -110,7 +110,7 @@ const Navbar = () => {
           <nav className="flex gap-7 flex-1">
             <Link
               to="/dashboard"
-              className="flex items-center gap-1.5 text-sm font-medium text-gray-600 hover:text-brand-600"
+              className="flex items-center gap-1.5 text-sm font-medium text-white hover:text-white/80"
             >
               <BarChart3 className="h-4 w-4" />
               <span>Dashboard</span>
