@@ -7,6 +7,7 @@ import { useOutflowsTotals } from "@/hooks/useOutflowsTotals";
 import { useCashTrend } from "@/hooks/useCashTrend";
 import { useMembershipRevenueForecast } from "@/hooks/useMembershipRevenueForecast";
 import { useProjectedSurplusDeficit } from "@/hooks/useProjectedSurplusDeficit";
+import { useActiveMembershipCount } from "@/hooks/useActiveMembershipCount";
 
 const DashboardPage = () => {
   const { user } = useAuth();
@@ -23,7 +24,7 @@ const DashboardPage = () => {
         </p>
       </div>
       
-      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-5">
+      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-6">
         <Card>
           <CardHeader className="pb-2">
             <CardTitle className="text-sm font-medium text-muted-foreground">Bank Balance</CardTitle>
@@ -133,6 +134,34 @@ const DashboardPage = () => {
             })()}
           </CardContent>
         </Card>
+        {/* Active Membership Count Card */}
+        <Card>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm font-medium text-muted-foreground">Active Membership Count</CardTitle>
+          </CardHeader>
+          <CardContent>
+            {(() => {
+              const { count, isLoading: countLoading, error: countError } = useActiveMembershipCount();
+              if (countLoading) {
+                return <div className="text-2xl font-bold text-brand-600">Loading...</div>;
+              } else if (countError) {
+                return <div className="text-2xl font-bold text-danger-500">Error</div>;
+              } else {
+                return (
+                  <div>
+                    <div className="text-2xl font-bold text-brand-600">
+                      {count !== null ? count.toLocaleString() : '—'}
+                    </div>
+                    <p className="text-xs text-muted-foreground">
+                      All active members across tiers
+                    </p>
+                  </div>
+                );
+              }
+            })()}
+          </CardContent>
+        </Card>
+
         <Card>
           <CardHeader className="pb-2">
             <CardTitle className="text-sm font-medium text-muted-foreground">Tomorrow's Inflows</CardTitle>
