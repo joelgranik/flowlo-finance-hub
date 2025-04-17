@@ -59,29 +59,49 @@ const Navbar = () => {
         {/* Hamburger (left) */}
         {/* Hamburger (left, mobile only) */}
         <button
-          className="flex items-center justify-center md:hidden p-2 rounded focus:outline-none focus:ring-2 focus:ring-white hover:bg-purple-600 transition"
+          className="flex items-center justify-center md:hidden p-2 rounded focus:outline-none focus:ring-2 focus:ring-white hover:bg-purple-600 transition mr-2"
           aria-label="Open menu"
           onClick={() => setMobileMenuOpen((open) => !open)}
         >
           <Menu className="h-8 w-8 text-white drop-shadow-md" />
         </button>
 
-        {/* Centered Logo */}
-        <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 flex flex-col items-center z-10">
-          <Link to="/dashboard" className="flex flex-col items-center group">
-            <img
-              src={LOGO_SRC}
-              alt="FloLo Logo"
-              className="h-12 md:h-14 w-auto drop-shadow-xl transition-transform group-hover:scale-105"
-              style={{ maxWidth: 180 }}
-            />
-          </Link>
-        </div>
+        {/* Logo (left) */}
+        <Link to="/dashboard" className="flex items-center z-10 mr-6">
+          <img
+            src={LOGO_SRC}
+            alt="FloLo Logo"
+            className="h-12 md:h-14 w-auto drop-shadow-xl transition-transform hover:scale-105"
+            style={{ maxWidth: 160 }}
+          />
+        </Link>
 
-        {/* Desktop nav (right) */}
-        <div className="hidden md:flex items-center gap-8 ml-auto">
-          <nav className="flex gap-7">
-            {navLinks}
+        {/* Desktop nav (center/right) */}
+        <div className="hidden md:flex items-center gap-8 flex-1">
+          <nav className="flex gap-7 flex-1">
+            <Link
+              to="/dashboard"
+              className="flex items-center gap-1.5 text-sm font-medium text-white transition-colors hover:text-purple-200"
+            >
+              <BarChart3 className="h-4 w-4" />
+              <span>Dashboard</span>
+            </Link>
+            <Link
+              to="/data-entry"
+              className="flex items-center gap-1.5 text-sm font-medium text-white transition-colors hover:text-purple-200"
+            >
+              <FileText className="h-4 w-4" />
+              <span>Data Entry</span>
+            </Link>
+            {userRole === "Staff" && (
+              <Link
+                to="/admin"
+                className="flex items-center gap-1.5 text-sm font-medium text-white transition-colors hover:text-purple-200"
+              >
+                <Settings className="h-4 w-4" />
+                <span>Admin</span>
+              </Link>
+            )}
           </nav>
           {user && (
             <span className="text-sm font-semibold text-white/90 ml-4">
