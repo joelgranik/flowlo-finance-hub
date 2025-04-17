@@ -4,7 +4,9 @@ import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
 import { LogOut, FileText, BarChart3, Settings, Menu } from "lucide-react";
 import React from "react";
-import { useProjectedSurplusDeficit } from '@/hooks/useCashProjections';
+import { useQuery } from '@tanstack/react-query'
+import { supabase } from '@/integrations/supabase/client'
+import { useProjectedSurplus } from '@/hooks/useProjectedSurplus'
 
 const LOGO_SRC = "/flolo-logo.png";
 
@@ -13,7 +15,22 @@ const Navbar = () => {
   const navigate = useNavigate();
   const [mobileMenuOpen, setMobileMenuOpen] = React.useState(false);
 
-  const { data, isLoading, error } = useProjectedSurplusDeficit();
+  // fetch latest bank balance
+  const { data: bankData = { balance_amount: 0 }, isLoading: upcomingBalanceLoading } = useQuery(
+    ['latestBalance'],
+    async () => {
+      const { data } = await supabase
+        .from('bank_balances')
+        .select('balance_amount')
+        .order('created_at', { ascending: false })
+        .limit(1)
+      return data?.[0] ?? { balance_amount: 0 }
+    }
+  )
+
+  // fetch 7‑day surplus
+  const { data: proj = { surplus: 0 } } = useProjectedSurplus()
+  const upcomingBalance = (bankData.balance_amount || 0) + (proj.surplus || 0)
 
   const handleLogout = async () => {
     await logout();
@@ -29,13 +46,13 @@ const Navbar = () => {
     <>
       <Link
         to="/dashboard"
-        className="flex items-center gap-1.5 text-sm font-medium text-white hover:text-white/80"
+        className="flex items-center gap-1.5 text-sm font-medium text-gray-600 hover:text-brand-600"
         onClick={() => setMobileMenuOpen(false)}
       >
         <BarChart3 className="h-4 w-4" />
         <span>Dashboard</span>
-        { !isLoading && data?.surplus < 0 && (
-          <span className="ml-1 inline-block rounded-full bg-red-600 px-2 py-0.5 text-xs font-semibold text-white">
+        { !upcomingBalanceLoading && upcomingBalance < 0 && (
+          <span className="ml-1 inline-block rounded-full bg-red-600 px-2 py-0.5 text-xs text-white">
             Low Balance
           </span>
         ) }
@@ -96,7 +113,7 @@ const Navbar = () => {
         </button>
 
         {/* Logo (left) */}
-        <Link to="/dashboard" className="flex items-center gap-1.5 text-sm font-medium text-white hover:text-white/80">
+        <Link to="/dashboard" className="flex items-center gap-1.5 text-sm font-medium text-gray-600 hover:text-brand-600">
           <img
             src={LOGO_SRC}
             alt="FloLo Logo"
@@ -110,7 +127,7 @@ const Navbar = () => {
           <nav className="flex gap-7 flex-1">
             <Link
               to="/dashboard"
-              className="flex items-center gap-1.5 text-sm font-medium text-white hover:text-white/80"
+              className="flex items-center gap-1.5 text-sm font-medium text-gray-600 hover:text-brand-600"
             >
               <BarChart3 className="h-4 w-4" />
               <span>Dashboard</span>
@@ -122,7 +139,7 @@ const Navbar = () => {
             </Link>
             <Link
               to="/data-entry"
-              className="flex items-center gap-1.5 text-sm font-medium text-white transition-colors hover:text-purple-200"
+              className="flex items-center gap-1.5 text-sm font-medium text-gray-600 hover:text-brand-600"
             >
               <FileText className="h-4 w-4" />
               <span>Data Entry</span>
@@ -131,7 +148,7 @@ const Navbar = () => {
   <>
     <Link
       to="/admin"
-      className="flex items-center gap-1.5 text-sm font-medium text-white transition-colors hover:text-purple-200"
+      className="flex items-center gap-1.5 text-sm font-medium text-gray-600 hover:text-brand-600"
     >
       <Settings className="h-4 w-4" />
       <span>Admin</span>
