@@ -1,31 +1,31 @@
-import { useQuery } from '@tanstack/react-query';
-import { supabase } from '@/integrations/supabase/client';
+import { useQuery } from '@tanstack/react-query'
+import { supabase } from '@/integrations/supabase/client'
 
 export function useProjectedSurplus() {
+  const today   = new Date().toISOString().slice(0,10)
+  const weekOut = new Date(Date.now() + 7*24*60*60*1000).toISOString().slice(0,10)
+
   return useQuery(['projectedSurplus'], async () => {
-    const today = new Date().toISOString().slice(0, 10);
-    const weekOut = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString().slice(0, 10);
-
-    // Fetch inflows
-    const { data: inflowRows, error: inflowError } = await supabase
+    // fetch inflows
+    const { data: inRows,  error: inErr  } = await supabase
       .from('scheduled_items')
       .select('expected_amount')
-      .eq('type', 'Inflow')
+      .eq('type','Inflow')
       .gte('expected_date', today)
-      .lte('expected_date', weekOut);
-    if (inflowError) throw inflowError;
+      .lte('expected_date', weekOut)
+    if (inErr) throw inErr
+    const inflows = inRows.reduce((sum, r) => sum + r.expected_amount, 0)
 
-    // Fetch outflows
-    const { data: outflowRows, error: outflowError } = await supabase
+    // fetch outflows
+    const { data: outRows, error: outErr } = await supabase
       .from('scheduled_items')
       .select('expected_amount')
-      .eq('type', 'Outflow')
+      .eq('type','Outflow')
       .gte('expected_date', today)
-      .lte('expected_date', weekOut);
-    if (outflowError) throw outflowError;
+      .lte('expected_date', weekOut)
+    if (outErr) throw outErr
+    const outflows = outRows.reduce((sum, r) => sum + r.expected_amount, 0)
 
-    const inflows = (inflowRows || []).reduce((sum, row) => sum + (row.expected_amount ?? 0), 0);
-    const outflows = (outflowRows || []).reduce((sum, row) => sum + (row.expected_amount ?? 0), 0);
-    return { surplus: inflows - outflows };
-  });
+    return { surplus: inflows - outflows }
+  })
 }
