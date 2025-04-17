@@ -5,6 +5,8 @@ import { useAuth } from "@/contexts/AuthContext";
 import { LogOut, FileText, BarChart3, Settings, Menu } from "lucide-react";
 import React from "react";
 
+const LOGO_SRC = "/flolo-logo.png";
+
 const Navbar = () => {
   const { logout, user, userRole, profile } = useAuth();
   const navigate = useNavigate();
@@ -52,60 +54,83 @@ const Navbar = () => {
   );
 
   return (
-    <header className="border-b bg-white shadow-sm">
-      <div className="container mx-auto flex h-16 items-center justify-between px-4 md:px-6">
-        <div className="flex items-center gap-6">
-          <Link to="/dashboard" className="flex items-center gap-2">
-            <span className="text-2xl font-bold text-brand-600">FloLo</span>
-            <span className="text-xl font-medium text-gray-600">Cash Flow</span>
+    <header className="bg-gradient-to-r from-purple-700 to-purple-500 shadow-md w-full">
+      <div className="relative flex items-center justify-between h-16 max-w-7xl mx-auto px-4 md:px-6">
+        {/* Hamburger (left) */}
+        <button
+          className="flex items-center justify-center md:hidden p-2 rounded focus:outline-none focus:ring-2 focus:ring-white"
+          aria-label="Open menu"
+          onClick={() => setMobileMenuOpen((open) => !open)}
+        >
+          <Menu className="h-7 w-7 text-white" />
+        </button>
+
+        {/* Centered Logo */}
+        <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 flex flex-col items-center z-10">
+          <Link to="/dashboard" className="flex flex-col items-center">
+            <img
+              src={LOGO_SRC}
+              alt="FloLo Holistic Logo"
+              className="h-10 md:h-12 w-auto drop-shadow-lg"
+              style={{ maxWidth: 160 }}
+            />
           </Link>
-          {/* Desktop nav */}
-          <nav className="hidden md:flex gap-6">
+        </div>
+
+        {/* Desktop nav (right) */}
+        <div className="hidden md:flex items-center gap-6 ml-auto">
+          <nav className="flex gap-6">
             {navLinks}
           </nav>
-          {/* Hamburger for mobile */}
-          <button
-            className="md:hidden ml-2 p-2 rounded hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-brand-600"
-            aria-label="Open menu"
-            onClick={() => setMobileMenuOpen((open) => !open)}
-          >
-            <Menu className="h-6 w-6 text-brand-600" />
-          </button>
-        </div>
-        <div className="flex items-center gap-4">
           {user && (
-            <span className="hidden md:inline text-sm font-medium text-gray-600">
+            <span className="text-sm font-medium text-white/90">
               Welcome, {displayName}!
             </span>
           )}
           <Button 
             variant="ghost" 
             onClick={handleLogout}
-            className="hidden md:flex items-center gap-2 text-gray-600 hover:text-brand-600"
+            className="flex items-center gap-2 text-white hover:text-brand-200"
           >
             <LogOut className="h-4 w-4" />
             <span>Logout</span>
           </Button>
         </div>
+      </div>
         {/* Mobile menu dropdown */}
         {mobileMenuOpen && (
-          <div className="absolute top-16 left-0 w-full bg-white shadow-md border-b z-50 md:hidden animate-fade-in">
-            <nav className="flex flex-col gap-4 px-6 py-4">
-              {navLinks}
-              {user && (
-                <span className="text-sm font-medium text-gray-600 mb-2">
-                  Welcome, {displayName}!
-                </span>
-              )}
-              <Button
-                variant="ghost"
-                onClick={() => { setMobileMenuOpen(false); handleLogout(); }}
-                className="flex items-center gap-2 text-gray-600 hover:text-brand-600 w-fit"
-              >
-                <LogOut className="h-4 w-4" />
-                <span>Logout</span>
-              </Button>
-            </nav>
+          <div className="fixed inset-0 z-40 md:hidden">
+            {/* Overlay */}
+            <div
+              className="absolute inset-0 bg-black bg-opacity-40 backdrop-blur-sm"
+              onClick={() => setMobileMenuOpen(false)}
+              aria-label="Close menu"
+              tabIndex={0}
+            />
+            {/* Drawer */}
+            <div className="absolute top-0 left-0 w-64 h-full bg-gradient-to-b from-purple-700 to-purple-500 shadow-xl flex flex-col p-6 animate-slide-in">
+              <div className="flex items-center mb-8">
+                <img src={LOGO_SRC} alt="FloLo Holistic Logo" className="h-10 w-auto mx-auto" style={{ maxWidth: 140 }} />
+              </div>
+              <nav className="flex flex-col gap-6">
+                {navLinks}
+              </nav>
+              <div className="mt-8">
+                {user && (
+                  <span className="block text-sm font-medium text-white/90 mb-2">
+                    Welcome, {displayName}!
+                  </span>
+                )}
+                <Button
+                  variant="ghost"
+                  onClick={() => { setMobileMenuOpen(false); handleLogout(); }}
+                  className="flex items-center gap-2 text-white hover:text-brand-200 w-fit"
+                >
+                  <LogOut className="h-4 w-4" />
+                  <span>Logout</span>
+                </Button>
+              </div>
+            </div>
           </div>
         )}
       </div>
