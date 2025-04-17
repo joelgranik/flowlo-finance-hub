@@ -54,43 +54,44 @@ const Navbar = () => {
   );
 
   return (
-    <header className="bg-gradient-to-r from-purple-700 to-purple-500 shadow-md w-full">
-      <div className="relative flex items-center justify-between h-16 max-w-7xl mx-auto px-4 md:px-6">
+    <header className="bg-gradient-to-r from-purple-800 via-purple-700 to-purple-500 shadow-lg w-full border-b border-purple-900">
+      <div className="relative flex items-center justify-between h-16 max-w-7xl mx-auto px-4 md:px-8">
         {/* Hamburger (left) */}
+        {/* Hamburger (left, mobile only) */}
         <button
-          className="flex items-center justify-center md:hidden p-2 rounded focus:outline-none focus:ring-2 focus:ring-white"
+          className="flex items-center justify-center md:hidden p-2 rounded focus:outline-none focus:ring-2 focus:ring-white hover:bg-purple-600 transition"
           aria-label="Open menu"
           onClick={() => setMobileMenuOpen((open) => !open)}
         >
-          <Menu className="h-7 w-7 text-white" />
+          <Menu className="h-8 w-8 text-white drop-shadow-md" />
         </button>
 
         {/* Centered Logo */}
         <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 flex flex-col items-center z-10">
-          <Link to="/dashboard" className="flex flex-col items-center">
+          <Link to="/dashboard" className="flex flex-col items-center group">
             <img
               src={LOGO_SRC}
-              alt="FloLo Holistic Logo"
-              className="h-10 md:h-12 w-auto drop-shadow-lg"
-              style={{ maxWidth: 160 }}
+              alt="FloLo Logo"
+              className="h-12 md:h-14 w-auto drop-shadow-xl transition-transform group-hover:scale-105"
+              style={{ maxWidth: 180 }}
             />
           </Link>
         </div>
 
         {/* Desktop nav (right) */}
-        <div className="hidden md:flex items-center gap-6 ml-auto">
-          <nav className="flex gap-6">
+        <div className="hidden md:flex items-center gap-8 ml-auto">
+          <nav className="flex gap-7">
             {navLinks}
           </nav>
           {user && (
-            <span className="text-sm font-medium text-white/90">
+            <span className="text-sm font-semibold text-white/90 ml-4">
               Welcome, {displayName}!
             </span>
           )}
           <Button 
             variant="ghost" 
             onClick={handleLogout}
-            className="flex items-center gap-2 text-white hover:text-brand-200"
+            className="flex items-center gap-2 text-white hover:text-purple-200 transition"
           >
             <LogOut className="h-4 w-4" />
             <span>Logout</span>
