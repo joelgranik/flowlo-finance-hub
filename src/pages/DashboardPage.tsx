@@ -4,6 +4,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useBankBalance } from "@/hooks/useBankBalance";
 import { useInflowsTotals } from "@/hooks/useInflowsTotals";
 import { useOutflowsTotals } from "@/hooks/useOutflowsTotals";
+import { useCashTrend } from "@/hooks/useCashTrend";
 
 const DashboardPage = () => {
   const { user } = useAuth();
@@ -20,7 +21,7 @@ const DashboardPage = () => {
         </p>
       </div>
       
-      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-5">
         <Card>
           <CardHeader className="pb-2">
             <CardTitle className="text-sm font-medium text-muted-foreground">Bank Balance</CardTitle>
@@ -36,6 +37,41 @@ const DashboardPage = () => {
               </div>
             )}
             <p className="text-xs text-muted-foreground">Latest input from Bank Balance form</p>
+          </CardContent>
+        </Card>
+
+        {/* 7-Day Cash Trend Card */}
+        <Card>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm font-medium text-muted-foreground">7-Day Cash Trend</CardTitle>
+          </CardHeader>
+          <CardContent>
+            {(() => {
+              const { recentNet, priorNet, percentChange, isLoading: trendLoading, error: trendError } = useCashTrend();
+              if (trendLoading) {
+                return <div className="text-2xl font-bold text-brand-600">Loading...</div>;
+              } else if (trendError) {
+                return <div className="text-2xl font-bold text-danger-500">Error</div>;
+              } else {
+                const trendUp = percentChange !== null && percentChange >= 0;
+                return (
+                  <div>
+                    <div className={`text-2xl font-bold ${trendUp ? 'text-success-500' : 'text-danger-500'} flex items-center gap-2`}>
+                      {recentNet !== null ? `$${recentNet.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}` : '—'}
+                      {percentChange !== null && (
+                        <span className={`flex items-center ml-2 text-base ${trendUp ? 'text-success-600' : 'text-danger-600'}`}>
+                          {trendUp ? '▲' : '▼'}
+                          {Math.abs(percentChange).toFixed(1)}%
+                        </span>
+                      )}
+                    </div>
+                    <p className="text-xs text-muted-foreground">
+                      vs. prior 7 days
+                    </p>
+                  </div>
+                );
+              }
+            })()}
           </CardContent>
         </Card>
         <Card>
