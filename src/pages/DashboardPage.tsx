@@ -312,25 +312,3 @@ const DashboardPage = () => {
 }
 
 export default DashboardPage;
-          </CardHeader>
-          <CardContent className="p-2 sm:p-3 md:p-4 overflow-x-auto w-full h-full flex-1">
-            {(() => {
-              const { inflows, isLoading, error } = useTopUpcomingFlows();
-              if (isLoading) {
-                return <div className="h-[240px] flex items-center justify-center text-brand-600">Loading...</div>;
-              } else if (error) {
-                return <div className="h-[240px] flex items-center justify-center text-danger-500">Error</div>;
-              } else if (!inflows || inflows.length === 0) {
-                return <div className="h-[240px] flex items-center justify-center text-muted-foreground">No data</div>;
-              } else {
-                return <TopFlowsTable data={inflows} type="inflow" />;
-              }
-            })()}
-          </CardContent>
-        </Card>
-      </div>
-    </div>
-  );
-};
-
-export default DashboardPage;
