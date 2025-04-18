@@ -313,35 +313,6 @@ const DashboardPage = () => {
 
 export default DashboardPage;
 
-
-        {/* Projected Cash Surplus/Deficit Card */}
-        <Card className="min-w-[220px] w-full h-full flex-1">
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">Projected Cash Surplus/Deficit</CardTitle>
-          </CardHeader>
-          <CardContent className="p-2 sm:p-4 w-full h-full flex-1">
-            {(() => {
-              const { net, inflows, outflows, isLoading: projLoading, error: projError } = useProjectedSurplusDeficit();
-              if (projLoading) {
-                return <div className="text-2xl font-bold text-brand-600">Loading...</div>;
-              } else if (projError) {
-                return <div className="text-2xl font-bold text-danger-500">Error</div>;
-              } else {
-                const isSurplus = net !== null && net >= 0;
-                return (
-                  <div>
-                    <div className={`text-2xl font-bold ${isSurplus ? 'text-success-500' : 'text-danger-500'}`}>
-                      {net !== null ? `${isSurplus ? '+' : '-'}$${Math.abs(net).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}` : '—'}
-                    </div>
-                    <p className="text-xs text-muted-foreground">
-                      Next 7 days: inflows <span className="text-success-600">${inflows !== null ? inflows.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : '—'}</span>, outflows <span className="text-danger-600">${outflows !== null ? outflows.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : '—'}</span>
-                    </p>
-                  </div>
-                );
-              }
-            })()}
-          </CardContent>
-        </Card>
         {/* Active Membership Count Card */}
         <Card className="min-w-[220px] w-full h-full flex-1">
           <CardHeader className="pb-2">
