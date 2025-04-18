@@ -314,34 +314,6 @@ const DashboardPage = () => {
 export default DashboardPage;
 
 
-        {/* 30-Day Membership Revenue Forecast Card */}
-        <Card className="min-w-[220px] w-full h-full flex-1">
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">30-Day Membership Revenue Forecast</CardTitle>
-          </CardHeader>
-          <CardContent className="p-2 sm:p-4 w-full h-full flex-1">
-            {(() => {
-              const { forecast, isLoading: forecastLoading, error: forecastError } = useMembershipRevenueForecast();
-              if (forecastLoading) {
-                return <div className="text-2xl font-bold text-brand-600">Loading...</div>;
-              } else if (forecastError) {
-                return <div className="text-2xl font-bold text-danger-500">Error</div>;
-              } else {
-                return (
-                  <div>
-                    <div className="text-2xl font-bold text-brand-600">
-                      {forecast !== null ? `$${forecast.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}` : '—'}
-                    </div>
-                    <p className="text-xs text-muted-foreground">
-                      Next 30 days, all active members
-                    </p>
-                  </div>
-                );
-              }
-            })()}
-          </CardContent>
-        </Card>
-
         {/* Projected Cash Surplus/Deficit Card */}
         <Card className="min-w-[220px] w-full h-full flex-1">
           <CardHeader className="pb-2">
