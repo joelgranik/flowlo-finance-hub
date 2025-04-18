@@ -312,13 +312,6 @@ const DashboardPage = () => {
 }
 
 export default DashboardPage;
-            {(() => {
-              const { outflows, isLoading, error } = useTopUpcomingFlows();
-              if (isLoading) {
-                return <div className="h-[240px] flex items-center justify-center text-brand-600">Loading...</div>;
-              } else if (error) {
-                return <div className="h-[240px] flex items-center justify-center text-danger-500">Error</div>;
-              } else if (!outflows || outflows.length === 0) {
                 return <div className="h-[240px] flex items-center justify-center text-muted-foreground">No data</div>;
               } else {
                 return <TopFlowsTable data={outflows} type="outflow" />;
