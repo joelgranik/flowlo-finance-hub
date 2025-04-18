@@ -312,19 +312,6 @@ const DashboardPage = () => {
 }
 
 export default DashboardPage;
-                return <div className="h-[240px] flex items-center justify-center text-muted-foreground">No data</div>;
-              } else {
-                return <TopFlowsTable data={outflows} type="outflow" />;
-              }
-            })()}
-          </CardContent>
-        </Card>
-
-        {/* Top 5 Expected Inflows */}
-        <Card className="col-span-1 min-w-[220px]">
-          <CardHeader>
-            <CardTitle>Top 5 Expected Inflows</CardTitle>
-            <CardDescription>Sorted by amount (desc)</CardDescription>
           </CardHeader>
           <CardContent className="p-2 sm:p-3 md:p-4 overflow-x-auto w-full h-full flex-1">
             {(() => {
