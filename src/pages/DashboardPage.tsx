@@ -309,50 +309,10 @@ const DashboardPage = () => {
       </div>
     </div>
   );
-              <div className="text-2xl font-bold text-danger-500">Error</div>
-            ) : (
-              <div className="text-2xl font-bold text-brand-600">
-                {bankBalance !== null ? `$${bankBalance.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}` : '—'}
-              </div>
-            )}
-            <p className="text-xs text-muted-foreground">Latest input from Bank Balance form</p>
-          </CardContent>
-        </Card>
+}
 
-        {/* 7-Day Cash Trend Card */}
-        <Card className="min-w-[220px] w-full h-full flex-1">
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">7-Day Cash Trend</CardTitle>
-          </CardHeader>
-          <CardContent className="p-2 sm:p-4 w-full h-full flex-1">
-            {(() => {
-              const { recentNet, priorNet, percentChange, isLoading: trendLoading, error: trendError } = useCashTrend();
-              if (trendLoading) {
-                return <div className="text-2xl font-bold text-brand-600">Loading...</div>;
-              } else if (trendError) {
-                return <div className="text-2xl font-bold text-danger-500">Error</div>;
-              } else {
-                const trendUp = percentChange !== null && percentChange >= 0;
-                return (
-                  <div>
-                    <div className={`text-2xl font-bold ${trendUp ? 'text-success-500' : 'text-danger-500'} flex items-center gap-2`}>
-                      {recentNet !== null ? `$${recentNet.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}` : '—'}
-                      {percentChange !== null && (
-                        <span className={`flex items-center ml-2 text-base ${trendUp ? 'text-success-600' : 'text-danger-600'}`}>
-                          {trendUp ? '▲' : '▼'}
-                          {Math.abs(percentChange).toFixed(1)}%
-                        </span>
-                      )}
-                    </div>
-                    <p className="text-xs text-muted-foreground">
-                      vs. prior 7 days
-                    </p>
-                  </div>
-                );
-              }
-            })()}
-          </CardContent>
-        </Card>
+export default DashboardPage;
+
 
         {/* 30-Day Membership Revenue Forecast Card */}
         <Card className="min-w-[220px] w-full h-full flex-1">
